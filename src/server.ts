@@ -1,10 +1,13 @@
 import express from 'express';
+import config from './misc/config';
 import authRouter from './routes/auth';
 import appRouter from './routes/app';
 
+console.info('Server initialized with config', config);
+
 const app = express();
-const port = 3000;
-const host = 'http://localhost';
+const host = config.server.host;
+const port = config.server.port;
 
 app.use('/', express.json());
 
