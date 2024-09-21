@@ -19,4 +19,8 @@
 
 
 ## TODO
-  -
+  - endpoints to implement
+    - /login    <- default route
+    - /logout
+    - /register
+    - /         <- some simple hello word response on authenticated user
