@@ -1,6 +1,6 @@
 import express from 'express';
 import config from './misc/config';
-import authRouter from './routes/auth';
+import authRouter from './routes/authentication';
 import appRouter from './routes/app';
 
 console.info('Server initialized with config:', config);
