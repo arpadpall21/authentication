@@ -1,28 +1,28 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import passwordValidator from 'password-validator';
+import { validatePassword } from '../misc/passwordHandlers';
 
-interface LoginOrRegisterBody {
+interface LoginOrRegisterRequestBody {
   user: string;
   password: string;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   success: boolean;
   message?: string;
 }
 
 const authRouter = Router();
 
-authRouter.post('/register', (req: Request<object, object, LoginOrRegisterBody>, res: Response<AuthResponse>) => {
+authRouter.post('/register', (req: Request<object, object, LoginOrRegisterRequestBody>, res: Response<AuthResponse>) => {
   console.log(req.body)
 
-  
+  validatePassword('test')
   
   res.send({ success: true });
 });
 
-authRouter.post('/login', (req: Request<object, object, LoginOrRegisterBody>, res: Response<AuthResponse>) => {
+authRouter.post('/login', (req: Request<object, object, LoginOrRegisterRequestBody>, res: Response<AuthResponse>) => {
 
   res.send({ success: true });
 });
