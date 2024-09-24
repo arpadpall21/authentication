@@ -6,12 +6,42 @@ interface Config {
     host: string;
     port: number;
   };
+  authentication: {
+    user: {
+      minLength: number;
+      maxLength: number;
+    };
+    password: {
+      minLength: number;
+      maxLength: number;
+      requireUppercase: boolean;
+      requireLowercase: boolean;
+      requiredMinDigits: number;
+      allowSpaces: boolean;
+      balckList: string[];
+    };
+  };
 }
 
 const defaultConfig: Config = {
   server: {
     host: 'localhost',
     port: 3000,
+  },
+  authentication: {
+    user: {
+      minLength: 8,
+      maxLength: 45,
+    },
+    password: {
+      minLength: 8,
+      maxLength: 45,
+      requireUppercase: false,
+      requireLowercase: false,
+      requiredMinDigits: 0,
+      allowSpaces: false,
+      balckList: [],
+    },
   },
 };
 let config: Config;

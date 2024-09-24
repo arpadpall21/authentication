@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { validatePassword } from '../misc/passwordHandlers';
+import { validatePassword } from '../misc/authHandlers';
 
 interface LoginOrRegisterRequest {
   user: string;
@@ -10,16 +10,15 @@ interface LoginOrRegisterRequest {
 interface AuthSuccessResponse {}
 
 interface AuthErrorResponse {
-  userError?: string;
+  userError?: string[];
   passwordError?: string[];
 }
 
 const authRouter = Router();
 
 authRouter.post('/register', (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
-  console.log(req.body)
+  console.log('------------------------------')
 
-  validatePassword('test')
   
   res.send({ success: true, message: [] });
 });
