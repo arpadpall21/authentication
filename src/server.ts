@@ -3,7 +3,7 @@ import config from './misc/config';
 import authRouter from './routes/auth';
 import appRouter from './routes/app';
 
-console.info('Server initialized with config', config);
+console.info('Server initialized with config:', config);
 
 const app = express();
 const host = config.server.host;
@@ -15,5 +15,5 @@ app.use('/', authRouter);
 app.use('/', appRouter);
 
 app.listen(port, () => {
-  console.warn(`Express is listening on ${host}:${port}`);
+  console.warn(`Express is listening on: ${host}:${port}`);
 });
