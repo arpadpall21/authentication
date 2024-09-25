@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt';
 import { validateUser, validatePassword } from '../misc/authHandlers';
 
 interface LoginOrRegisterRequest {
-  user: string;
-  password: string;
+  user?: string;
+  password?: string;
 }
 
 interface AuthSuccessResponse {}
@@ -37,15 +37,34 @@ authRouter.post(
     }
 
     res.send({});
-});
+  },
+);
 
-authRouter.post('/login', (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
+authRouter.post(
+  '/login',
+  (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
+    const userValidationResult = validateUser(req.body.user);
+    const passwordValidationResult = validatePassword(req.body.password);
 
-  res.send({ success: true, message: [] });
-});
+    if (!userValidationResult.success || !passwordValidationResult.success) {
+      const errorResponse: AuthErrorResponse = {};
+      if (!userValidationResult.success) {
+        errorResponse.userError = userValidationResult.message;
+      }
+      if (!passwordValidationResult.success) {
+        errorResponse.passwordError = passwordValidationResult.message;
+      }
+
+      res.statusCode = 422;
+      res.send(errorResponse);
+      return;
+    }
+
+    res.send({});
+  },
+);
 
 authRouter.get('/logout', (req: Request, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
-
 
   res.send({ success: true, message: [] });
 });

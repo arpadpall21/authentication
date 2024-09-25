@@ -35,12 +35,17 @@ if (!config.authentication.password.allowSpaces) {
   passwordValidator.has().not().spaces();
 }
 
-export function validateUser(user: string): ValidationResult {
+export function validateUser(user?: string): ValidationResult {
   const result: ValidationResult = {
     success: true,
     message: [],
   };
 
+  if (!user) {
+    result.success = false;
+    result.message.push('no user provided');
+    return result;
+  }
   if (user.length < config.authentication.user.minLength) {
     result.success = false;
     result.message.push(`user to short, min length ${config.authentication.user.minLength} characters`);
@@ -53,11 +58,17 @@ export function validateUser(user: string): ValidationResult {
   return result;
 }
 
-export function validatePassword(password: string): ValidationResult {
+export function validatePassword(password?: string): ValidationResult {
   const result: ValidationResult = {
     success: false,
     message: [],
   };
+
+  if (!password) {
+    result.success = false;
+    result.message.push('no password provided');
+    return result;
+  }
 
   const validationResult = passwordValidator.validate(password, { details: true }) as PasswordValidatorResult[];
 
