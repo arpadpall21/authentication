@@ -18,12 +18,13 @@ passwordValidator
   .min(config.authentication.password.minLength)
   .is()
   .max(config.authentication.password.maxLength)
-  .has()
-  .digits(config.authentication.password.requiredMinDigits)
   .is()
   .not()
-  .oneOf(config.authentication.password.balckList);
+  .oneOf(config.authentication.password.blacklist);
 
+if (config.authentication.password.requiredMinDigits > 0) {
+  passwordValidator.has().digits(config.authentication.password.requiredMinDigits);
+}
 if (config.authentication.password.requireLowercase) {
   passwordValidator.has().lowercase();
 }

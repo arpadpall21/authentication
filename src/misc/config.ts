@@ -18,7 +18,7 @@ interface Config {
       requireLowercase: boolean;
       requiredMinDigits: number;
       allowSpaces: boolean;
-      balckList: string[];
+      blacklist: string[];
     };
   };
 }
@@ -40,7 +40,7 @@ const defaultConfig: Config = {
       requireLowercase: false,
       requiredMinDigits: 0,
       allowSpaces: false,
-      balckList: [],
+      blacklist: [],
     },
   },
 };
