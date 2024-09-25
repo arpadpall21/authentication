@@ -39,7 +39,7 @@ const defaultConfig: Config = {
       requireUppercase: false,
       requireLowercase: false,
       requiredMinDigits: 0,
-      allowSpaces: false,
+      allowSpaces: true,
       blacklist: [],
     },
   },

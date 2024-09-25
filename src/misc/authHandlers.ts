@@ -43,11 +43,11 @@ export function validateUser(user: string): ValidationResult {
 
   if (user.length < config.authentication.user.minLength) {
     result.success = false;
-    result.message.push(`user to short, min length ${config.authentication.user.minLength}`);
+    result.message.push(`user to short, min length ${config.authentication.user.minLength} characters`);
   }
   if (user.length > config.authentication.user.maxLength) {
     result.success = false;
-    result.message.push(`user to long, max length ${config.authentication.user.maxLength}`);
+    result.message.push(`user to long, max length ${config.authentication.user.maxLength} characters`);
   }
 
   return result;
