@@ -37,13 +37,13 @@ const defaultConfig: Config = {
     },
     password: {
       minLength: 8,
-      maxLength: 45, // max ~70 recommended
+      maxLength: 45, // max 70
       requireUppercase: false,
       requireLowercase: false,
       requiredMinDigits: 0,
       allowSpaces: true,
       blacklist: [],
-      saltRounds: 10, // min 8 recommended
+      saltRounds: 10, // min 8
       timingAttackProtectionMs: 1000,
     },
   },
