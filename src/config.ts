@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import objectMerge from 'object-merge';
+import { StorageType } from './storage/abstract';
 
 interface Config {
   server: {
@@ -22,6 +23,9 @@ interface Config {
       saltRounds: number;
       timingAttackProtectionMs: number;
     };
+  };
+  storage: {
+    type: StorageType;
   };
 }
 
@@ -46,6 +50,9 @@ const defaultConfig: Config = {
       saltRounds: 10, // min 8
       timingAttackProtectionMs: 1000,
     },
+  },
+  storage: {
+    type: StorageType.FILE,
   },
 };
 let config: Config;

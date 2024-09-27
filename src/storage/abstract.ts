@@ -1,3 +1,7 @@
+export enum StorageType {
+  FILE,
+}
+
 abstract class AbstractStorage {
   // instance = one db connection
 
