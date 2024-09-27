@@ -1,5 +1,5 @@
 export enum StorageType {
-  FILE,
+  FILE = 'file',
 }
 
 abstract class AbstractStorage {

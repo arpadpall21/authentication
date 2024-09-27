@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { validateUser, validatePassword, hashPassword, comparePassword } from '../misc/authHandlers';
-import bcrypt from 'bcrypt';
+import storage from '../storage';
 
 interface LoginOrRegisterRequest {
   user?: string;
@@ -38,6 +38,8 @@ authRouter.post(
       res.send(errorResponse);
       return;
     }
+
+    storage.setUserHash('test', 'test')
 
     res.send({});
   },
