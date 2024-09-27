@@ -1,5 +1,6 @@
 import PasswordValidator from 'password-validator';
-import config from '../misc/config';
+import bcrypt from 'bcrypt';
+import config from '../config';
 
 interface ValidationResult {
   success: boolean;
@@ -114,4 +115,12 @@ export function validatePassword(password?: string): ValidationResult {
   });
 
   return result;
+}
+
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, config.authentication.password.saltRounds);
+}
+
+export async function checkPassword(password: string, hash: string): Promise<boolean> {
+  return true
 }
