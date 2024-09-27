@@ -121,6 +121,18 @@ export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, config.authentication.password.saltRounds);
 }
 
-export async function checkPassword(password: string, hash: string): Promise<boolean> {
-  return true
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
+  return new Promise((res, rej) => {
+    setTimeout(
+      async () => {
+        try {
+          const result = await bcrypt.compare(password, hash);
+          res(result);
+        } catch (err) {
+          rej(err);
+        }
+      },
+      Math.floor(Math.random() * config.authentication.password.timingAttackProtectionMs),
+    );
+  });
 }
