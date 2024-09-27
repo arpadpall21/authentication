@@ -12,6 +12,7 @@
   "author": "Arpad Pall",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
     "@types/object-merge": "^2.5.3",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
@@ -27,7 +28,9 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^4.19.2",
-    "object-merge": "^2.5.1"
+    "object-merge": "^2.5.1",
+    "password-validator": "^5.3.0"
   }
 }
