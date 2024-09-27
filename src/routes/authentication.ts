@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
+import { validateUser, validatePassword, hashPassword, comparePassword } from '../misc/authHandlers';
 import bcrypt from 'bcrypt';
-import { validateUser, validatePassword } from '../misc/authHandlers';
 
 interface LoginOrRegisterRequest {
   user?: string;
@@ -18,7 +18,10 @@ const authRouter = Router();
 
 authRouter.post(
   '/register',
-  (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
+  async (
+    req: Request<object, object, LoginOrRegisterRequest>,
+    res: Response<AuthSuccessResponse | AuthErrorResponse>,
+  ) => {
     const userValidationResult = validateUser(req.body.user);                     // NOTE: password & username logic is the same as in the /login endpoint (maybe simplify it later on to make the code DRY)
     const passwordValidationResult = validatePassword(req.body.password);
 

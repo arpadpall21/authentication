@@ -1,5 +1,5 @@
 import express from 'express';
-import config from './misc/config';
+import config from './config';
 import authRouter from './routes/authentication';
 import appRouter from './routes/app';
 
