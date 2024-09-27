@@ -19,7 +19,7 @@ const authRouter = Router();
 authRouter.post(
   '/register',
   (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
-    const userValidationResult = validateUser(req.body.user);
+    const userValidationResult = validateUser(req.body.user);                     // NOTE: password & username logic is the same as in the /login endpoint (maybe simplify it later on to make the code DRY)
     const passwordValidationResult = validatePassword(req.body.password);
 
     if (!userValidationResult.success || !passwordValidationResult.success) {
