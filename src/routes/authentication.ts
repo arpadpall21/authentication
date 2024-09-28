@@ -39,7 +39,7 @@ authRouter.post(
       return;
     }
 
-    storage.setUserHash('test', 'test')
+    console.log( storage.setUserHash('test', 'test') )
 
     res.send({});
   },

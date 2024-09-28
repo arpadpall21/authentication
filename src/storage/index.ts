@@ -5,7 +5,7 @@ import FileStorage from './fileStorage';
 
 let storage;
 
-switch (config.storage.type) {
+switch (config.storage.use) {
   case StorageType.FILE: {
     storage = new FileStorage();
     console.info(`Storage used: ${StorageType.FILE}`);

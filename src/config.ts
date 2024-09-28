@@ -25,7 +25,10 @@ interface Config {
     };
   };
   storage: {
-    type: StorageType;
+    use: StorageType;
+    file: {
+      path: string;
+    }
   };
 }
 
@@ -52,7 +55,10 @@ const defaultConfig: Config = {
     },
   },
   storage: {
-    type: StorageType.FILE,
+    use: StorageType.FILE,
+    file: {
+      path: '',
+    },
   },
 };
 let config: Config;
