@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc --build",
-    "start:dev": "nodemon src/server.ts",
+    "start:dev": "nodemon --ignore ./fileStorage src/server.ts",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "author": "Arpad Pall",

@@ -7,5 +7,11 @@
     "password": {
       "allowSpaces": false
     }
+  },
+  "storage": {
+    "use": "file",
+    "file": {
+      "path": "./fileStorage/fileStorage.json"
+    }
   }
 }
