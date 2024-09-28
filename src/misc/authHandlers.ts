@@ -1,6 +1,7 @@
 import PasswordValidator from 'password-validator';
 import bcrypt from 'bcrypt';
 import config from '../config';
+import { AuthErrorResponse } from '../routes/authentication';
 
 interface ValidationResult {
   success: boolean;
@@ -36,7 +37,7 @@ if (!config.authentication.password.allowSpaces) {
   passwordValidator.has().not().spaces();
 }
 
-export function validateUser(user?: string): ValidationResult {
+function validateUser(user?: string): ValidationResult {
   const result: ValidationResult = {
     success: true,
     message: [],
@@ -59,7 +60,7 @@ export function validateUser(user?: string): ValidationResult {
   return result;
 }
 
-export function validatePassword(password?: string): ValidationResult {
+function validatePassword(password?: string): ValidationResult {
   const result: ValidationResult = {
     success: false,
     message: [],
@@ -115,6 +116,28 @@ export function validatePassword(password?: string): ValidationResult {
   });
 
   return result;
+}
+
+export function validateUserAndPassword(
+  user?: string,
+  password?: string,
+): { ok: boolean; errorResponse?: AuthErrorResponse } {
+  const userValidationResult = validateUser(user);
+  const passwordValidationResult = validatePassword(password);
+
+  if (!userValidationResult.success || !passwordValidationResult.success) {
+    const errorResponse: AuthErrorResponse = {};
+    if (!userValidationResult.success) {
+      errorResponse.userError = userValidationResult.message;
+    }
+    if (!passwordValidationResult.success) {
+      errorResponse.passwordError = passwordValidationResult.message;
+    }
+
+    return { ok: false, errorResponse };
+  }
+
+  return { ok: true };
 }
 
 export async function hashPassword(password: string): Promise<string> {

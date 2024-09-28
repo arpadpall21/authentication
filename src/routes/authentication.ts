@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { validateUser, validatePassword, hashPassword, comparePassword } from '../misc/authHandlers';
+import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
 import storage from '../storage';
 
 interface LoginOrRegisterRequest {
@@ -7,7 +7,7 @@ interface LoginOrRegisterRequest {
   password?: string;
 }
 
-interface AuthErrorResponse {
+export interface AuthErrorResponse {
   userError?: string[];
   passwordError?: string[];
 }
@@ -18,20 +18,10 @@ authRouter.post(
   '/register',
   async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
     try {
-      const userValidationResult = validateUser(req.body.user);                     // NOTE: password & username logic is the same as in the /login endpoint (maybe simplify it later on to make the code DRY)
-      const passwordValidationResult = validatePassword(req.body.password);
-
-      if (!userValidationResult.success || !passwordValidationResult.success) {
-        const errorResponse: AuthErrorResponse = {};
-        if (!userValidationResult.success) {
-          errorResponse.userError = userValidationResult.message;
-        }
-        if (!passwordValidationResult.success) {
-          errorResponse.passwordError = passwordValidationResult.message;
-        }
-
+      const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
+      if (!userAndPasswordValidationResult.ok) {
         res.statusCode = 422;
-        res.send(errorResponse);
+        res.send(userAndPasswordValidationResult.errorResponse);
         return;
       }
 
@@ -50,20 +40,10 @@ authRouter.post(
   '/login',
   async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
     try {
-      const userValidationResult = validateUser(req.body.user);
-      const passwordValidationResult = validatePassword(req.body.password);
-
-      if (!userValidationResult.success || !passwordValidationResult.success) {
-        const errorResponse: AuthErrorResponse = {};
-        if (!userValidationResult.success) {
-          errorResponse.userError = userValidationResult.message;
-        }
-        if (!passwordValidationResult.success) {
-          errorResponse.passwordError = passwordValidationResult.message;
-        }
-
+      const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
+      if (!userAndPasswordValidationResult.ok) {
         res.statusCode = 422;
-        res.send(errorResponse);
+        res.send(userAndPasswordValidationResult.errorResponse);
         return;
       }
 
