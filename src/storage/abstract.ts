@@ -5,7 +5,7 @@ export enum StorageType {
 abstract class AbstractStorage {
   // instance = one db connection
 
-  abstract getUserHash(user: string): Promise<string | undefined>;
+  abstract getUserPasswordHash(user: string): Promise<string | undefined>;
 
   abstract upsertUserHash(user: string, hash: string): Promise<boolean>;
 }
