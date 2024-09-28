@@ -20,6 +20,7 @@ class FileStorage extends AbstractStorage {
   async getUserHash(user: string): Promise<string | undefined> {
     try {
       const fileStorage = await this.readFileStorage();
+
       console.info(`Getting user hash [user: ${user}] [hash: ${fileStorage[user]}]`);
       return fileStorage[user];
     } catch (err) {
@@ -33,6 +34,8 @@ class FileStorage extends AbstractStorage {
       const fileStorage = await this.readFileStorage();
       fileStorage[user] = hash;
       await this.writeFileStorage(fileStorage);
+
+      console.info(`Upserting user hash [user: ${user}] [hash: ${fileStorage[user]}]`);
       return true;
     } catch (err) {
       console.error(`Failed to upser user hash for user: ${user}`, err);

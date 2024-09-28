@@ -7,8 +7,6 @@ interface LoginOrRegisterRequest {
   password?: string;
 }
 
-interface AuthSuccessResponse {}
-
 interface AuthErrorResponse {
   userError?: string[];
   passwordError?: string[];
@@ -18,58 +16,72 @@ const authRouter = Router();
 
 authRouter.post(
   '/register',
-  async (
-    req: Request<object, object, LoginOrRegisterRequest>,
-    res: Response<AuthSuccessResponse | AuthErrorResponse>,
-  ) => {
-    const userValidationResult = validateUser(req.body.user);                     // NOTE: password & username logic is the same as in the /login endpoint (maybe simplify it later on to make the code DRY)
-    const passwordValidationResult = validatePassword(req.body.password);
+  async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
+    try {
+      const userValidationResult = validateUser(req.body.user);                     // NOTE: password & username logic is the same as in the /login endpoint (maybe simplify it later on to make the code DRY)
+      const passwordValidationResult = validatePassword(req.body.password);
 
-    if (!userValidationResult.success || !passwordValidationResult.success) {
-      const errorResponse: AuthErrorResponse = {};
-      if (!userValidationResult.success) {
-        errorResponse.userError = userValidationResult.message;
-      }
-      if (!passwordValidationResult.success) {
-        errorResponse.passwordError = passwordValidationResult.message;
+      if (!userValidationResult.success || !passwordValidationResult.success) {
+        const errorResponse: AuthErrorResponse = {};
+        if (!userValidationResult.success) {
+          errorResponse.userError = userValidationResult.message;
+        }
+        if (!passwordValidationResult.success) {
+          errorResponse.passwordError = passwordValidationResult.message;
+        }
+
+        res.statusCode = 422;
+        res.send(errorResponse);
+        return;
       }
 
-      res.statusCode = 422;
-      res.send(errorResponse);
-      return;
+      console.info(`User registered: ${req.body.user}`);
+      await storage.upsertUserHash(req.body.user || '', req.body.password || '');
+      res.sendStatus(200);
+    } catch (err) {
+      console.error('Endpoint error: /register', err);
+      res.sendStatus(500);
     }
-
-    console.log( storage.upsertUserHash('test', 'test') )
-
-    res.send({});
   },
 );
 
 authRouter.post(
   '/login',
-  (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
-    const userValidationResult = validateUser(req.body.user);
-    const passwordValidationResult = validatePassword(req.body.password);
+  async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
+    try {
+      const userValidationResult = validateUser(req.body.user);
+      const passwordValidationResult = validatePassword(req.body.password);
 
-    if (!userValidationResult.success || !passwordValidationResult.success) {
-      const errorResponse: AuthErrorResponse = {};
-      if (!userValidationResult.success) {
-        errorResponse.userError = userValidationResult.message;
-      }
-      if (!passwordValidationResult.success) {
-        errorResponse.passwordError = passwordValidationResult.message;
+      if (!userValidationResult.success || !passwordValidationResult.success) {
+        const errorResponse: AuthErrorResponse = {};
+        if (!userValidationResult.success) {
+          errorResponse.userError = userValidationResult.message;
+        }
+        if (!passwordValidationResult.success) {
+          errorResponse.passwordError = passwordValidationResult.message;
+        }
+
+        res.statusCode = 422;
+        res.send(errorResponse);
+        return;
       }
 
-      res.statusCode = 422;
-      res.send(errorResponse);
-      return;
+      const userHash = await storage.getUserHash(req.body.user || '');
+      const authResult = await comparePassword(req.body.password || '', userHash || '');
+      if (!authResult) {
+        res.sendStatus(401);
+        return;
+      }
+
+      res.sendStatus(200);
+    } catch (err) {
+      console.error('Endpoint error: /login', err);
+      res.sendStatus(500);
     }
-
-    res.send({});
   },
 );
 
-authRouter.get('/logout', (req: Request, res: Response<AuthSuccessResponse | AuthErrorResponse>) => {
+authRouter.get('/logout', (req: Request, res: Response) => {
 
   res.send({ success: true, message: [] });
 });
