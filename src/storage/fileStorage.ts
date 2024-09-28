@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs, { promises as fsPromises } from 'node:fs';
 import AbstractStorage from './abstract';
 import config from '../config';
 
@@ -17,11 +17,36 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserHash(user: string): Promise<string> {
-    return '';
+  async getUserHash(user: string): Promise<string | undefined> {
+    try {
+      const fileStorage = await this.readFileStorage();
+      console.info(`Getting user hash [user: ${user}] [hash: ${fileStorage[user]}]`);
+      return fileStorage[user];
+    } catch (err) {
+      console.error(`Failed to get user hash for user: ${user}`, err);
+      return undefined;
+    }
   }
 
-  async setUserHash(user: string, hash: string): Promise<boolean> {
+  async upsertUserHash(user: string, hash: string): Promise<boolean> {
+    try {
+      const fileStorage = await this.readFileStorage();
+      fileStorage[user] = hash;
+      await this.writeFileStorage(fileStorage);
+      return true;
+    } catch (err) {
+      console.error(`Failed to upser user hash for user: ${user}`, err);
+      return false;
+    }
+  }
+
+  private async readFileStorage(): Promise<{ [key: string]: string }> {
+    const result = await fsPromises.readFile(fileStoragePath);
+    return JSON.parse(result.toString());
+  }
+
+  private async writeFileStorage(storage: object): Promise<boolean> {
+    await fsPromises.writeFile(fileStoragePath, JSON.stringify(storage));
     return true;
   }
 }
