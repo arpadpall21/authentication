@@ -46,6 +46,12 @@ authRouter.post(
         }
       }
 
+      if (config.authentication.user.whitelist && !config.authentication.user.whitelist.includes(req.body.user || '')) {
+        res.statusCode = 401;
+        res.send({ userError: ['User not whitelisted'] });
+        return;
+      }
+
       const hashedPassword = await hashPassword(req.body.password);
       await storage.upsertUserHash(req.body.user, hashedPassword);
       console.info(`User registered: ${req.body.user}`);
