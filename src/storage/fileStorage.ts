@@ -17,7 +17,12 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserPasswordHash(user: string): Promise<string | undefined> {
+  async getUserPasswordHash(user?: string): Promise<string | undefined> {
+    if (!user) {
+      console.error('Failed to get user hash, no user provided');
+      return;
+    }
+
     try {
       const fileStorage = await this.readFileStorage();
 
@@ -29,7 +34,12 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async upsertUserHash(user: string, hash: string): Promise<boolean> {
+  async upsertUserHash(user?: string, hash?: string): Promise<boolean> {
+    if (!user || !hash) {
+      console.error('Failed to upser user hash, no user or hash provided');
+      return false;
+    }
+
     try {
       const fileStorage = await this.readFileStorage();
       fileStorage[user] = hash;
