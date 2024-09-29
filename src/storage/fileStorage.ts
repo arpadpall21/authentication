@@ -17,11 +17,11 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserHash(user: string): Promise<string | undefined> {
+  async getUserPasswordHash(user: string): Promise<string | undefined> {
     try {
       const fileStorage = await this.readFileStorage();
 
-      console.info(`Getting user hash [user: ${user}] [hash: ${fileStorage[user]}]`);
+      console.info(`Getting password hash for user: ${user}`);
       return fileStorage[user];
     } catch (err) {
       console.error(`Failed to get user hash for user: ${user}`, err);

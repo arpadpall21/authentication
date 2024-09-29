@@ -3,11 +3,6 @@
     "host": "localhost",
     "port": 3000
   },
-  "authentication": {
-    "password": {
-      "allowSpaces": false
-    }
-  },
   "storage": {
     "use": "file",
     "file": {
