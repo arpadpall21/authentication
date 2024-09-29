@@ -26,29 +26,28 @@ authRouter.post(
         return;
       }
 
-      if (await storage.getUserPasswordHash(req.body.user)) {
-        res.statusCode = 409;
-        res.send({ userError: ['User already exists'] });
+      if (
+        config.authentication.user.blacklist &&
+        config.authentication.user.blacklist.some((blacklistedUser) => {
+          if (req.body.user && RegExp(blacklistedUser).test(req.body.user)) {
+            return true;
+          }
+        })
+      ) {
+        res.statusCode = 401;
+        res.send({ userError: ['User blacklisted'] });
         return;
-      }
-
-      if (config.authentication.user.blacklist) {
-        if (
-          config.authentication.user.blacklist.some((blacklistedUser) => {
-            if (req.body.user && RegExp(blacklistedUser).test(req.body.user)) {
-              return true;
-            }
-          })
-        ) {
-          res.statusCode = 401;
-          res.send({ userError: ['User blacklisted'] });
-          return;
-        }
       }
 
       if (config.authentication.user.whitelist && !config.authentication.user.whitelist.includes(req.body.user || '')) {
         res.statusCode = 401;
         res.send({ userError: ['User not whitelisted'] });
+        return;
+      }
+
+      if (await storage.getUserPasswordHash(req.body.user)) {
+        res.statusCode = 409;
+        res.send({ userError: ['User already exists'] });
         return;
       }
 
