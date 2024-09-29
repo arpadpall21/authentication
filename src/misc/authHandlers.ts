@@ -140,11 +140,19 @@ export function validateUserAndPassword(
   return { ok: true };
 }
 
-export async function hashPassword(password: string): Promise<string> {
+export async function hashPassword(password?: string): Promise<string> {
+  if (!password) {
+    return '';
+  }
+
   return bcrypt.hash(password, config.authentication.password.saltRounds);
 }
 
-export async function comparePassword(password: string, hash: string): Promise<boolean> {
+export async function comparePassword(password?: string, hash?: string): Promise<boolean> {
+  if (!password || !hash) {
+    return false;
+  }
+
   return new Promise((res, rej) => {
     setTimeout(
       async () => {
@@ -152,7 +160,8 @@ export async function comparePassword(password: string, hash: string): Promise<b
           const result = await bcrypt.compare(password, hash);
           res(result);
         } catch (err) {
-          rej(err);
+          console.error('Password comparison failed', err);
+          rej(false);
         }
       },
       Math.floor(Math.random() * config.authentication.password.timingAttackProtectionMs),

@@ -11,6 +11,8 @@ interface Config {
     user: {
       minLength: number;
       maxLength: number;
+      blacklist?: string[]; // accepts regex
+      whitelist?: string[];
     };
     password: {
       minLength: number;
@@ -28,7 +30,7 @@ interface Config {
     use: StorageType;
     file: {
       path: string;
-    }
+    };
   };
 }
 
@@ -41,6 +43,8 @@ const defaultConfig: Config = {
     user: {
       minLength: 8,
       maxLength: 45,
+      blacklist: undefined,
+      whitelist: undefined,
     },
     password: {
       minLength: 8,

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
 import storage from '../storage';
+import config from '../config';
 
 interface LoginOrRegisterRequest {
   user?: string;
@@ -25,8 +26,33 @@ authRouter.post(
         return;
       }
 
-      const hashedPassword = await hashPassword(req.body.password || '')
-      await storage.upsertUserHash(req.body.user || '', hashedPassword);
+      if (
+        config.authentication.user.blacklist &&
+        config.authentication.user.blacklist.some((blacklistedUser) => {
+          if (req.body.user && RegExp(blacklistedUser).test(req.body.user)) {
+            return true;
+          }
+        })
+      ) {
+        res.statusCode = 401;
+        res.send({ userError: ['User blacklisted'] });
+        return;
+      }
+
+      if (config.authentication.user.whitelist && !config.authentication.user.whitelist.includes(req.body.user || '')) {
+        res.statusCode = 401;
+        res.send({ userError: ['User not whitelisted'] });
+        return;
+      }
+
+      if (await storage.getUserPasswordHash(req.body.user)) {
+        res.statusCode = 409;
+        res.send({ userError: ['User already exists'] });
+        return;
+      }
+
+      const hashedPassword = await hashPassword(req.body.password);
+      await storage.upsertUserHash(req.body.user, hashedPassword);
       console.info(`User registered: ${req.body.user}`);
       res.sendStatus(200);
     } catch (err) {
@@ -47,8 +73,8 @@ authRouter.post(
         return;
       }
 
-      const passwordHash = await storage.getUserPasswordHash(req.body.user || '');
-      const authResult = await comparePassword(req.body.password || '', passwordHash || '');
+      const passwordHash = await storage.getUserPasswordHash(req.body.user);
+      const authResult = await comparePassword(req.body.password, passwordHash);
       if (!authResult) {
         res.sendStatus(401);
         return;
