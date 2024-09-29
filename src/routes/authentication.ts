@@ -25,7 +25,13 @@ authRouter.post(
         return;
       }
 
-      const hashedPassword = await hashPassword(req.body.password || '')
+      if (await storage.getUserPasswordHash(req.body.user || '')) {
+        res.statusCode = 409;
+        res.send({ userError: ['User already exists'] });
+        return;
+      }
+
+      const hashedPassword = await hashPassword(req.body.password || '');
       await storage.upsertUserHash(req.body.user || '', hashedPassword);
       console.info(`User registered: ${req.body.user}`);
       res.sendStatus(200);
