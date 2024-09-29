@@ -45,7 +45,7 @@ class FileStorage extends AbstractStorage {
       fileStorage[user] = hash;
       await this.writeFileStorage(fileStorage);
 
-      console.info(`Upserting user hash [user: ${user}] [hash: ${fileStorage[user]}]`);
+      console.info(`Upserting user hash [user: ${user}]`);
       return true;
     } catch (err) {
       console.error(`Failed to upser user hash for user: ${user}`, err);

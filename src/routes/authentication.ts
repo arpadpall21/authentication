@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
 import storage from '../storage';
+import config from '../config';
 
 interface LoginOrRegisterRequest {
   user?: string;
@@ -29,6 +30,20 @@ authRouter.post(
         res.statusCode = 409;
         res.send({ userError: ['User already exists'] });
         return;
+      }
+
+      if (config.authentication.user.blacklist) {
+        if (
+          config.authentication.user.blacklist.some((blacklistedUser) => {
+            if (req.body.user && RegExp(blacklistedUser).test(req.body.user)) {
+              return true;
+            }
+          })
+        ) {
+          res.statusCode = 401;
+          res.send({ userError: ['User blacklisted'] });
+          return;
+        }
       }
 
       const hashedPassword = await hashPassword(req.body.password);
