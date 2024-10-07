@@ -37,17 +37,12 @@ if (!config.authentication.password.allowSpaces) {
   passwordValidator.has().not().spaces();
 }
 
-function validateUser(user?: string): ValidationResult {
+function validateUser(user: string): ValidationResult {
   const result: ValidationResult = {
     success: true,
     message: [],
   };
 
-  if (!user) {
-    result.success = false;
-    result.message.push('no user provided');
-    return result;
-  }
   if (user.length < config.authentication.user.minLength) {
     result.success = false;
     result.message.push(`user to short, min length ${config.authentication.user.minLength} characters`);
@@ -60,17 +55,11 @@ function validateUser(user?: string): ValidationResult {
   return result;
 }
 
-function validatePassword(password?: string): ValidationResult {
+function validatePassword(password: string): ValidationResult {
   const result: ValidationResult = {
     success: false,
     message: [],
   };
-
-  if (!password) {
-    result.success = false;
-    result.message.push('no password provided');
-    return result;
-  }
 
   const validationResult = passwordValidator.validate(password, { details: true }) as PasswordValidatorResult[];
 
@@ -119,8 +108,8 @@ function validatePassword(password?: string): ValidationResult {
 }
 
 export function validateUserAndPassword(
-  user?: string,
-  password?: string,
+  user: string,
+  password: string,
 ): { ok: boolean; errorResponse?: AuthErrorResponse } {
   const userValidationResult = validateUser(user);
   const passwordValidationResult = validatePassword(password);
@@ -140,19 +129,11 @@ export function validateUserAndPassword(
   return { ok: true };
 }
 
-export async function hashPassword(password?: string): Promise<string> {
-  if (!password) {
-    return '';
-  }
-
+export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, config.authentication.password.saltRounds);
 }
 
-export async function comparePassword(password?: string, hash?: string): Promise<boolean> {
-  if (!password || !hash) {
-    return false;
-  }
-
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
   return new Promise((res, rej) => {
     setTimeout(
       async () => {
