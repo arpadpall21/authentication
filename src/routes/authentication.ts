@@ -23,8 +23,7 @@ authRouter.post(
     try {
       const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
       if (!userAndPasswordValidationResult.ok) {
-        res.statusCode = 422;
-        res.send(userAndPasswordValidationResult.errorResponse);
+        res.status(422).send(userAndPasswordValidationResult.errorResponse);
         return;
       }
 
@@ -36,24 +35,21 @@ authRouter.post(
           }
         })
       ) {
-        res.statusCode = 401;
-        res.send({ userError: ['User blacklisted'] });
+        res.status(401).send({ userError: ['user blacklisted'] });
         return;
       }
 
       if (config.authentication.user.whitelist && !config.authentication.user.whitelist.includes(req.body.user || '')) {
-        res.statusCode = 401;
-        res.send({ userError: ['User not whitelisted'] });
+        res.status(401).send({ userError: ['user not whitelisted'] });
         return;
       }
 
       if (await storage.getUserPasswordHash(req.body.user)) {
-        res.statusCode = 409;
-        res.send({ userError: ['User already exists'] });
+        res.status(409).send({ userError: ['user already exists'] });
         return;
       }
 
-      const hashedPassword = await hashPassword(req.body.password);
+      const hashedPassword = await hashPassword(req.body.password as string);
       await storage.upsertUserPasswordHash(req.body.user, hashedPassword);
       console.info(`User registered: ${req.body.user}`);
       res.sendStatus(200);
@@ -70,19 +66,23 @@ authRouter.post(
     try {
       const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
       if (!userAndPasswordValidationResult.ok) {
-        res.statusCode = 422;
-        res.send(userAndPasswordValidationResult.errorResponse);
+        res.status(422).send(userAndPasswordValidationResult.errorResponse);
         return;
       }
 
       const passwordHash = await storage.getUserPasswordHash(req.body.user);
-      const authResult = await comparePassword(req.body.password, passwordHash);
+      if (!passwordHash) {
+        res.sendStatus(401);
+        return;
+      }
+
+      const authResult = await comparePassword(req.body.password as string, passwordHash);
       if (!authResult) {
         res.sendStatus(401);
         return;
       }
 
-      const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
+      // const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
       // await storage.upsertUserSessionId(req.body.user, sessionId);
       
 
@@ -97,7 +97,7 @@ authRouter.post(
 
 authRouter.get('/logout', (req: Request, res: Response) => {
 
-  res.send({ success: true, message: [] });
+  res.status(200).send({ success: true, message: [] });
 });
 
 export default authRouter;

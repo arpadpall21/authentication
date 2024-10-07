@@ -37,7 +37,11 @@ if (!config.authentication.password.allowSpaces) {
   passwordValidator.has().not().spaces();
 }
 
-function validateUser(user: string): ValidationResult {
+function validateUser(user?: string): ValidationResult {
+  if (!user) {
+    return { success: false, message: ['user required'] };
+  }
+
   const result: ValidationResult = {
     success: true,
     message: [],
@@ -55,7 +59,11 @@ function validateUser(user: string): ValidationResult {
   return result;
 }
 
-function validatePassword(password: string): ValidationResult {
+function validatePassword(password?: string): ValidationResult {
+  if (!password) {
+    return { success: false, message: ['password required'] };
+  }
+
   const result: ValidationResult = {
     success: false,
     message: [],
@@ -108,8 +116,8 @@ function validatePassword(password: string): ValidationResult {
 }
 
 export function validateUserAndPassword(
-  user: string,
-  password: string,
+  user?: string,
+  password?: string,
 ): { ok: boolean; errorResponse?: AuthErrorResponse } {
   const userValidationResult = validateUser(user);
   const passwordValidationResult = validatePassword(password);
