@@ -32,6 +32,7 @@
     "bcrypt": "^5.1.1",
     "cookie": "^0.7.2",
     "express": "^4.19.2",
+    "generate-unique-id": "^2.0.3",
     "object-merge": "^2.5.1",
     "password-validator": "^5.3.0"
   }

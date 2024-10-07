@@ -8,5 +8,10 @@
     "file": {
       "path": "./fileStorage/fileStorage.json"
     }
+  },
+  "authentication": {
+    "sessionCookie": {
+      "idLength": 64
+    }
   }
 }

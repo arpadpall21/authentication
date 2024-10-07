@@ -25,6 +25,13 @@ interface Config {
       saltRounds: number;
       timingAttackProtectionMs: number;
     };
+    sessionCookie: {
+      httpOnly: boolean;
+      maxAge: number;
+      sameSite: boolean | 'strict' | 'lax' | 'none';
+      secure: boolean;
+      idLength: number;
+    };
   };
   storage: {
     use: StorageType;
@@ -54,8 +61,15 @@ const defaultConfig: Config = {
       requiredMinDigits: 0,
       allowSpaces: true,
       blacklist: [],
-      saltRounds: 10, // min 8
+      saltRounds: 10, // recommended range 8-15
       timingAttackProtectionMs: 1000,
+    },
+    sessionCookie: {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60, // 1 week
+      sameSite: true,
+      secure: false, // when true requires HTTPS
+      idLength: 32,
     },
   },
   storage: {
