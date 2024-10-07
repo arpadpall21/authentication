@@ -44,13 +44,13 @@ authRouter.post(
         return;
       }
 
-      if (await storage.getUserPasswordHash(req.body.user)) {
+      if (await storage.getUserPasswordHash(req.body.user as string)) {
         res.status(409).send({ userError: ['user already exists'] });
         return;
       }
 
       const hashedPassword = await hashPassword(req.body.password as string);
-      await storage.upsertUserPasswordHash(req.body.user, hashedPassword);
+      await storage.upsertUserPasswordHash(req.body.user as string, hashedPassword);
       console.info(`User registered: ${req.body.user}`);
       res.sendStatus(200);
     } catch (err) {
@@ -70,7 +70,7 @@ authRouter.post(
         return;
       }
 
-      const passwordHash = await storage.getUserPasswordHash(req.body.user);
+      const passwordHash = await storage.getUserPasswordHash(req.body.user as string);
       if (!passwordHash) {
         res.sendStatus(401);
         return;
@@ -82,9 +82,10 @@ authRouter.post(
         return;
       }
 
-      // const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
-      // await storage.upsertUserSessionId(req.body.user, sessionId);
-      
+      const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
+      await storage.upsertUserSessionId(req.body.user as string, sessionId);
+
+
 
       console.info(`User loggin: ${req.body.user}`);
       res.sendStatus(200);
