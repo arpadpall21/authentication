@@ -49,8 +49,8 @@ authRouter.post(
         return;
       }
 
-      const hashedPassword = await hashPassword(req.body.password as string);
-      await storage.upsertUserPasswordHash(req.body.user as string, hashedPassword);
+      const passwordHash = await hashPassword(req.body.password as string);
+      await storage.upsertUserPasswordHash(req.body.user as string, passwordHash);
       console.info(`User registered: ${req.body.user}`);
       res.sendStatus(200);
     } catch (err) {
@@ -84,10 +84,9 @@ authRouter.post(
 
       const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
       await storage.upsertUserSessionId(req.body.user as string, sessionId);
+      res.setHeader('Set-Cookie', generateSessionCookieValue(sessionId));
 
-
-
-      console.info(`User loggin: ${req.body.user}`);
+      console.info(`User logged in: ${req.body.user}`);
       res.sendStatus(200);
     } catch (err) {
       console.error('Endpoint error: /login', err);

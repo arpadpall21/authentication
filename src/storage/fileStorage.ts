@@ -46,14 +46,14 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async upsertUserPasswordHash(user: string, hash: string): Promise<void> {
+  async upsertUserPasswordHash(user: string, passwordHash: string): Promise<void> {
     try {
       const fileStorage = await this.readFileStorage();
 
       if (fileStorage.users[user]) {
-        fileStorage.users[user].passwordHash = hash;
+        fileStorage.users[user].passwordHash = passwordHash;
       } else {
-        fileStorage.users[user] = { passwordHash: hash };
+        fileStorage.users[user] = { passwordHash };
       }
 
       await this.writeFileStorage(fileStorage);
@@ -69,17 +69,21 @@ class FileStorage extends AbstractStorage {
   }
 
   async upsertUserSessionId(user: string, sessionId: string): Promise<void> {
-    // try {
-    //   const fileStorage = await this.readFileStorage();
-    //   fileStorage[user] = hash;
-    //   await this.writeFileStorage(fileStorage);
+    try {
+      const fileStorage = await this.readFileStorage();
 
-    //   console.info(`Upserting user paswrod hash for user: ${user}`);
-    //   return;
-    // } catch (err) {
-    //   console.error(`Failed to upser pasword hash for user: ${user}`, err);
-    // }
-    
+      if (fileStorage.users[user]) {
+        fileStorage.users[user].sessionId = sessionId;
+      } else {
+        fileStorage.users[user] = { sessionId };
+      }
+
+      await this.writeFileStorage(fileStorage);
+      console.info(`Upserting session id for user: ${user}`);
+      return;
+    } catch (err) {
+      console.error(`Failed to upser session id for user: ${user}`, err);
+    }
   }
 
   async deleteUserSessionId(user: string): Promise<void> {
