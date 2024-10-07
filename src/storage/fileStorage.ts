@@ -30,14 +30,13 @@ class FileStorage extends AbstractStorage {
       return fileStorage[user];
     } catch (err) {
       console.error(`Failed to get user hash for user: ${user}`, err);
-      return undefined;
     }
   }
 
-  async upsertUserPasswordHash(user?: string, hash?: string): Promise<boolean> {
+  async upsertUserPasswordHash(user?: string, hash?: string): Promise<void> {
     if (!user || !hash) {
       console.error('Failed to upser user hash, no user or hash provided');
-      return false;
+      return;
     }
 
     try {
@@ -46,23 +45,22 @@ class FileStorage extends AbstractStorage {
       await this.writeFileStorage(fileStorage);
 
       console.info(`Upserting user paswrod hash [user: ${user}]`);
-      return true;
+      return;
     } catch (err) {
       console.error(`Failed to upser pasword hash for user: ${user}`, err);
-      return false;
     }
   }
 
-  async getUserSessionId(user: string): Promise<string | null> {
-    return null;
+  async getUserSessionId(user: string): Promise<string | undefined> {
+    return;
   }
 
-  async upsertUserSessionId(user: string, sessionId: string): Promise<boolean> {
-    return false;
+  async upsertUserSessionId(user: string, sessionId: string): Promise<void> {
+    return;
   }
 
-  async deleteUserSessionId(user: string): Promise<boolean> {
-    return false;
+  async deleteUserSessionId(user: string): Promise<void> {
+    return;
   }
 
   private async readFileStorage(): Promise<{ [key: string]: string }> {
