@@ -10,3 +10,7 @@ export function generateSessionCookieValue(): string {
     secure: config.authentication.sessionCookie.secure,
   });
 }
+
+export function deleteSessionCookieValue(): string {
+  return cookie.serialize('session.id', 'deleted', { expires: new Date(0) });
+}

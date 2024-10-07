@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
-import { generateSessionCookieValue } from '../misc/loginSession';
+import { generateSessionCookieValue, deleteSessionCookieValue } from '../misc/userSession';
 import storage from '../storage';
 import config from '../config';
 
@@ -21,6 +21,7 @@ authRouter.post(
   async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
     console.log('------------------------')
     console.log( generateSessionCookieValue() )
+    console.log( deleteSessionCookieValue() )
   
   
   
