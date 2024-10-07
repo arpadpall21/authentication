@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import generateUniqueId from 'generate-unique-id';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
 import { generateSessionCookieValue, deleteSessionCookieValue } from '../misc/userSession';
 import storage from '../storage';
@@ -81,6 +82,8 @@ authRouter.post(
         return;
       }
 
+      const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
+      // await storage.upsertUserSessionId(req.body.user, sessionId);
       
 
       console.info(`User loggin: ${req.body.user}`);
