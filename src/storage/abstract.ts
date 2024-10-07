@@ -6,8 +6,11 @@ abstract class AbstractStorage {
   // instance = one db connection
 
   abstract getUserPasswordHash(user?: string): Promise<string | undefined>;
+  abstract upsertUserPasswordHash(user?: string, hash?: string): Promise<boolean>;
 
-  abstract upsertUserHash(user?: string, hash?: string): Promise<boolean>;      // TODO: rename this to be more clear
+  abstract getUserSessionId(user: string): Promise<string | null>;
+  abstract upsertUserSessionId(user: string, sessionId: string): Promise<boolean>;
+  abstract deleteUserSessionId(user: string): Promise<boolean>;
 }
 
 export default AbstractStorage;

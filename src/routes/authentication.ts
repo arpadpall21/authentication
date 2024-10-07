@@ -19,13 +19,6 @@ const authRouter = Router();
 authRouter.post(
   '/register',
   async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
-    console.log('------------------------')
-    console.log( generateSessionCookieValue() )
-    console.log( deleteSessionCookieValue() )
-  
-  
-  
-  
     try {
       const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
       if (!userAndPasswordValidationResult.ok) {
@@ -60,7 +53,7 @@ authRouter.post(
       }
 
       const hashedPassword = await hashPassword(req.body.password);
-      await storage.upsertUserHash(req.body.user, hashedPassword);
+      await storage.upsertUserPasswordHash(req.body.user, hashedPassword);
       console.info(`User registered: ${req.body.user}`);
       res.sendStatus(200);
     } catch (err) {
@@ -87,6 +80,8 @@ authRouter.post(
         res.sendStatus(401);
         return;
       }
+
+      
 
       console.info(`User loggin: ${req.body.user}`);
       res.sendStatus(200);
