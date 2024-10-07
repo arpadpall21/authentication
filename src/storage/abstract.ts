@@ -7,7 +7,7 @@ abstract class AbstractStorage {
 
   abstract getUserPasswordHash(user?: string): Promise<string | undefined>;
 
-  abstract upsertUserHash(user?: string, hash?: string): Promise<boolean>;
+  abstract upsertUserHash(user?: string, hash?: string): Promise<boolean>;      // TODO: rename this to be more clear
 }
 
 export default AbstractStorage;

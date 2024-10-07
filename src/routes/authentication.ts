@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
+import { generateSessionCookieValue } from '../misc/loginSession';
 import storage from '../storage';
 import config from '../config';
 
@@ -18,6 +19,12 @@ const authRouter = Router();
 authRouter.post(
   '/register',
   async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
+    console.log('------------------------')
+    console.log( generateSessionCookieValue() )
+  
+  
+  
+  
     try {
       const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
       if (!userAndPasswordValidationResult.ok) {
