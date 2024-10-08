@@ -38,16 +38,15 @@ if (!config.authentication.password.allowSpaces) {
 }
 
 function validateUser(user?: string): ValidationResult {
+  if (!user) {
+    return { success: false, message: ['user required'] };
+  }
+
   const result: ValidationResult = {
     success: true,
     message: [],
   };
 
-  if (!user) {
-    result.success = false;
-    result.message.push('no user provided');
-    return result;
-  }
   if (user.length < config.authentication.user.minLength) {
     result.success = false;
     result.message.push(`user to short, min length ${config.authentication.user.minLength} characters`);
@@ -61,16 +60,14 @@ function validateUser(user?: string): ValidationResult {
 }
 
 function validatePassword(password?: string): ValidationResult {
+  if (!password) {
+    return { success: false, message: ['password required'] };
+  }
+
   const result: ValidationResult = {
     success: false,
     message: [],
   };
-
-  if (!password) {
-    result.success = false;
-    result.message.push('no password provided');
-    return result;
-  }
 
   const validationResult = passwordValidator.validate(password, { details: true }) as PasswordValidatorResult[];
 
@@ -140,19 +137,11 @@ export function validateUserAndPassword(
   return { ok: true };
 }
 
-export async function hashPassword(password?: string): Promise<string> {
-  if (!password) {
-    return '';
-  }
-
+export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, config.authentication.password.saltRounds);
 }
 
-export async function comparePassword(password?: string, hash?: string): Promise<boolean> {
-  if (!password || !hash) {
-    return false;
-  }
-
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
   return new Promise((res, rej) => {
     setTimeout(
       async () => {

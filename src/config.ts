@@ -11,7 +11,7 @@ interface Config {
     user: {
       minLength: number;
       maxLength: number;
-      blacklist?: string[]; // accepts regex
+      blacklist?: string[];
       whitelist?: string[];
     };
     password: {
@@ -24,6 +24,13 @@ interface Config {
       blacklist: string[];
       saltRounds: number;
       timingAttackProtectionMs: number;
+    };
+    sessionCookie: {
+      httpOnly: boolean;
+      maxAge: number;
+      sameSite: boolean | 'strict' | 'lax' | 'none';
+      secure: boolean;
+      idLength: number;
     };
   };
   storage: {
@@ -43,7 +50,7 @@ const defaultConfig: Config = {
     user: {
       minLength: 8,
       maxLength: 45,
-      blacklist: undefined,
+      blacklist: undefined, // array that accepts regex members
       whitelist: undefined,
     },
     password: {
@@ -54,8 +61,15 @@ const defaultConfig: Config = {
       requiredMinDigits: 0,
       allowSpaces: true,
       blacklist: [],
-      saltRounds: 10, // min 8
+      saltRounds: 10, // recommended range 8-15
       timingAttackProtectionMs: 1000,
+    },
+    sessionCookie: {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60, // 1 week
+      sameSite: true,
+      secure: false, // when true requires HTTPS
+      idLength: 32,
     },
   },
   storage: {

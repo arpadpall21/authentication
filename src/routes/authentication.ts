@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
+import generateUniqueId from 'generate-unique-id';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
+import { setSessionCookie, deleteSessionCookie, getSessionIdFromCookie } from '../misc/userSession';
 import storage from '../storage';
 import config from '../config';
 
@@ -21,8 +23,7 @@ authRouter.post(
     try {
       const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
       if (!userAndPasswordValidationResult.ok) {
-        res.statusCode = 422;
-        res.send(userAndPasswordValidationResult.errorResponse);
+        res.status(422).send(userAndPasswordValidationResult.errorResponse);
         return;
       }
 
@@ -34,25 +35,22 @@ authRouter.post(
           }
         })
       ) {
-        res.statusCode = 401;
-        res.send({ userError: ['User blacklisted'] });
+        res.status(401).send({ userError: ['user blacklisted'] });
         return;
       }
 
       if (config.authentication.user.whitelist && !config.authentication.user.whitelist.includes(req.body.user || '')) {
-        res.statusCode = 401;
-        res.send({ userError: ['User not whitelisted'] });
+        res.status(401).send({ userError: ['user not whitelisted'] });
         return;
       }
 
-      if (await storage.getUserPasswordHash(req.body.user)) {
-        res.statusCode = 409;
-        res.send({ userError: ['User already exists'] });
+      if (await storage.getUserPasswordHash(req.body.user as string)) {
+        res.status(409).send({ userError: ['user already exists'] });
         return;
       }
 
-      const hashedPassword = await hashPassword(req.body.password);
-      await storage.upsertUserHash(req.body.user, hashedPassword);
+      const passwordHash = await hashPassword(req.body.password as string);
+      await storage.upsertUserPasswordHash(req.body.user as string, passwordHash);
       console.info(`User registered: ${req.body.user}`);
       res.sendStatus(200);
     } catch (err) {
@@ -68,19 +66,27 @@ authRouter.post(
     try {
       const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
       if (!userAndPasswordValidationResult.ok) {
-        res.statusCode = 422;
-        res.send(userAndPasswordValidationResult.errorResponse);
+        res.status(422).send(userAndPasswordValidationResult.errorResponse);
         return;
       }
 
-      const passwordHash = await storage.getUserPasswordHash(req.body.user);
-      const authResult = await comparePassword(req.body.password, passwordHash);
+      const passwordHash = await storage.getUserPasswordHash(req.body.user as string);
+      if (!passwordHash) {
+        res.sendStatus(401);
+        return;
+      }
+
+      const authResult = await comparePassword(req.body.password as string, passwordHash);
       if (!authResult) {
         res.sendStatus(401);
         return;
       }
 
-      console.info(`User loggin: ${req.body.user}`);
+      const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
+      await storage.upsertUserSessionId(req.body.user as string, sessionId);
+      setSessionCookie(res, sessionId);
+
+      console.info(`User logged in: ${req.body.user}`);
       res.sendStatus(200);
     } catch (err) {
       console.error('Endpoint error: /login', err);
@@ -89,9 +95,29 @@ authRouter.post(
   },
 );
 
-authRouter.get('/logout', (req: Request, res: Response) => {
+authRouter.get('/logout', async (req: Request, res: Response) => {
+  try {
+    const sessionId = getSessionIdFromCookie(req);
+    if (!sessionId) {
+      console.info('Failed to log out');
+      res.sendStatus(401);
+      return;
+    }
 
-  res.send({ success: true, message: [] });
+    const loggedOutUser = await storage.deleteUserSessionId(sessionId as string);
+    if (!loggedOutUser) {
+      console.info('Failed to log out');
+      res.sendStatus(401);
+      return;
+    }
+
+    deleteSessionCookie(res);
+    console.info(`User logged out user: ${loggedOutUser}`);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error('Endpoint error: /logout', err);
+    res.sendStatus(500);
+  }
 });
 
 export default authRouter;
