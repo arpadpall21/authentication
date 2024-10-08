@@ -10,7 +10,7 @@ abstract class AbstractStorage {
 
   abstract getUserSessionId(user: string): Promise<string | undefined>;
   abstract upsertUserSessionId(user: string, sessionId: string): Promise<void>;
-  abstract deleteUserSessionId(user: string): Promise<void>;
+  abstract deleteUserSessionId(sessionId: string): Promise<string | false>;
 }
 
 export default AbstractStorage;

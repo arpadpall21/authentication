@@ -43,6 +43,7 @@ class FileStorage extends AbstractStorage {
       }
     } catch (err) {
       console.error(`Failed to get user hash for user: ${user}`, err);
+      throw err;
     }
   }
 
@@ -61,6 +62,7 @@ class FileStorage extends AbstractStorage {
       return;
     } catch (err) {
       console.error(`Failed to upser pasword hash for user: ${user}`, err);
+      throw err;
     }
   }
 
@@ -83,10 +85,29 @@ class FileStorage extends AbstractStorage {
       return;
     } catch (err) {
       console.error(`Failed to upser session id for user: ${user}`, err);
+      throw err;
     }
   }
 
-  async deleteUserSessionId(user: string): Promise<void> {
+  async deleteUserSessionId(sessionId: string): Promise<string | false> {
+    try {
+      const fileStorage = await this.readFileStorage();
+
+      for (const user in fileStorage.users) {
+        if (fileStorage.users[user].sessionId === sessionId) {
+          delete fileStorage.users[user].sessionId;
+          await this.writeFileStorage(fileStorage);
+
+          console.info(`Session id deleted for user: ${user}`);
+          return user;
+        }
+      }
+
+      return false;
+    } catch (err) {
+      console.error('Failed to delete session id', err);
+      throw err;
+    }
   }
 
   private async readFileStorage(): Promise<Storage> {
