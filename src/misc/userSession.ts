@@ -27,14 +27,14 @@ export function getSessionIdFromCookie(req: Request): string | undefined {
 export async function verifySessionToken(req: Request, res: Response, next: NextFunction) {
   const sessionId = getSessionIdFromCookie(req);
   if (!sessionId) {
-    console.info(`Unauthorized request with session id: ${sessionId}`);
+    console.info(`Unauthorized request with session id: ${sessionId || ''}`);
     res.sendStatus(401);
     return;
   }
 
   const loggedInUser = await storage.getUserBySessionId(sessionId as string);
   if (!loggedInUser) {
-    console.info(`Unauthorized request with session id: ${sessionId}`);
+    console.info(`Unauthorized request with session id: ${sessionId} || ''`);
     res.sendStatus(401);
     return;
   }
