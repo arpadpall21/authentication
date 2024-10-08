@@ -99,15 +99,15 @@ authRouter.get('/logout', async (req: Request, res: Response) => {
   try {
     const sessionId = getSessionIdFromCookie(req);
     if (!sessionId) {
-      console.info(`Failed to log out: ${req.body.user}`);
-      res.sendStatus(404);
+      console.info('Failed to log out');
+      res.sendStatus(401);
       return;
     }
 
     const loggedOutUser = await storage.deleteUserSessionId(sessionId as string);
     if (!loggedOutUser) {
-      console.info('Log out failed');
-      res.sendStatus(404);
+      console.info('Failed to log out');
+      res.sendStatus(401);
       return;
     }
 
