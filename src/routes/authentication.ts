@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import generateUniqueId from 'generate-unique-id';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
-import { generateSessionCookieValue, deleteSessionCookieValue } from '../misc/userSession';
+import { setSessionCookie, deleteSessionCookie, getSessionIdFromCookie } from '../misc/userSession';
 import storage from '../storage';
 import config from '../config';
 
@@ -84,7 +84,7 @@ authRouter.post(
 
       const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
       await storage.upsertUserSessionId(req.body.user as string, sessionId);
-      res.setHeader('Set-Cookie', generateSessionCookieValue(sessionId));
+      setSessionCookie(res, sessionId);
 
       console.info(`User logged in: ${req.body.user}`);
       res.sendStatus(200);
@@ -95,7 +95,51 @@ authRouter.post(
   },
 );
 
-authRouter.get('/logout', (req: Request, res: Response) => {
+authRouter.get('/logout', async (req: Request, res: Response) => {
+  try {
+    const sessionId = getSessionIdFromCookie(req);
+    
+    console.log('-----------------------------------------------')
+    console.log(sessionId)
+    
+    // const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
+    // if (!userAndPasswordValidationResult.ok) {
+    //   res.status(422).send(userAndPasswordValidationResult.errorResponse);
+    //   return;
+    // }
+
+    // const passwordHash = await storage.getUserPasswordHash(req.body.user as string);
+    // if (!passwordHash) {
+    //   res.sendStatus(401);
+    //   return;
+    // }
+
+    // const authResult = await comparePassword(req.body.password as string, passwordHash);
+    // if (!authResult) {
+    //   res.sendStatus(401);
+    //   return;
+    // }
+
+    // const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
+    // await storage.upsertUserSessionId(req.body.user as string, sessionId);
+    // setSessionCookie(res, sessionId);
+
+
+
+
+    // console.info(`User logged out: ${req.body.user}`);
+    // res.sendStatus(200);
+    
+    
+    
+    // console.info(`Failed to log out: ${req.body.user}`);
+    // res.sendStatus(404);
+    
+    
+  } catch (err) {
+    console.error('Endpoint error: /logout', err);
+    res.sendStatus(500);
+  }
 
   res.status(200).send({ success: true, message: [] });
 });
