@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import cookie from 'cookie';
 import config from '../config';
+import storage from '../storage';
 
 export function setSessionCookie(res: Response, sessionId: string): void {
   res.setHeader(
@@ -21,4 +22,22 @@ export function deleteSessionCookie(res: Response): void {
 export function getSessionIdFromCookie(req: Request): string | undefined {
   const cookies = cookie.parse(req.headers.cookie || '') as { sessionId: string | undefined };
   return cookies.sessionId;
+}
+
+export async function verifySessionToken(req: Request, res: Response, next: NextFunction) {
+  const sessionId = getSessionIdFromCookie(req);
+  if (!sessionId) {
+    console.info(`Unauthorized request with session id: ${sessionId}`);
+    res.sendStatus(401);
+    return;
+  }
+
+  const loggedInUser = await storage.getUserBySessionId(sessionId as string);
+  if (!loggedInUser) {
+    console.info(`Unauthorized request with session id: ${sessionId}`);
+    res.sendStatus(401);
+    return;
+  }
+
+  next();
 }

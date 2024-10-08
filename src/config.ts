@@ -11,7 +11,7 @@ interface Config {
     user: {
       minLength: number;
       maxLength: number;
-      blacklist?: string[]; // accepts regex
+      blacklist?: string[];
       whitelist?: string[];
     };
     password: {
@@ -50,7 +50,7 @@ const defaultConfig: Config = {
     user: {
       minLength: 8,
       maxLength: 45,
-      blacklist: undefined,
+      blacklist: undefined, // array that accepts regex members
       whitelist: undefined,
     },
     password: {

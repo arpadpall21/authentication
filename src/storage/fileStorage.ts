@@ -66,8 +66,22 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserSessionId(user: string): Promise<string | undefined> {
-    return;
+  async getUserBySessionId(sessionId: string): Promise<string | undefined> {
+    try {
+      const fileStorage = await this.readFileStorage();
+
+      for (const user in fileStorage.users) {
+        if (fileStorage.users[user].sessionId === sessionId) {
+          console.info(`Getting user by session id: ${user}`);
+          return user;
+        }
+      }
+
+      return undefined;
+    } catch (err) {
+      console.error('Failed to get user by session id');
+      throw err;
+    }
   }
 
   async upsertUserSessionId(user: string, sessionId: string): Promise<void> {
