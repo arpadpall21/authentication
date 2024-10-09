@@ -34,7 +34,7 @@ export async function verifySessionToken(req: Request, res: Response, next: Next
 
   const loggedInUser = await storage.getUserBySessionId(sessionId as string);
   if (!loggedInUser) {
-    console.info(`Unauthorized request with session id: ${sessionId} || ''`);
+    console.info(`Unauthorized request with session id: ${sessionId || ''}`);
     res.sendStatus(401);
     return;
   }
