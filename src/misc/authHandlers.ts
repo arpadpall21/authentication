@@ -1,7 +1,7 @@
 import PasswordValidator from 'password-validator';
 import bcrypt from 'bcrypt';
 import config from '../config';
-import { AuthErrorResponse } from '../routes/authentication';
+import { AuthResponse } from '../routes/authentication';
 
 interface ValidationResult {
   success: boolean;
@@ -118,12 +118,12 @@ function validatePassword(password?: string): ValidationResult {
 export function validateUserAndPassword(
   user?: string,
   password?: string,
-): { ok: boolean; errorResponse?: AuthErrorResponse } {
+): { ok: boolean; errorResponse?: AuthResponse } {
   const userValidationResult = validateUser(user);
   const passwordValidationResult = validatePassword(password);
 
   if (!userValidationResult.success || !passwordValidationResult.success) {
-    const errorResponse: AuthErrorResponse = {};
+    const errorResponse: AuthResponse = {};
     if (!userValidationResult.success) {
       errorResponse.userError = userValidationResult.message;
     }

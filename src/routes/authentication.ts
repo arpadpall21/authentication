@@ -10,7 +10,8 @@ interface LoginOrRegisterRequest {
   password?: string;
 }
 
-export interface AuthErrorResponse {
+export interface AuthResponse {
+  message?: string;
   userError?: string[];
   passwordError?: string[];
 }
@@ -19,7 +20,7 @@ const authRouter = Router();
 
 authRouter.post(
   '/register',
-  async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
+  async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthResponse>) => {
     try {
       const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
       if (!userAndPasswordValidationResult.ok) {
@@ -52,7 +53,7 @@ authRouter.post(
       const passwordHash = await hashPassword(req.body.password as string);
       await storage.upsertUserPasswordHash(req.body.user as string, passwordHash);
       console.info(`User registered: ${req.body.user}`);
-      res.sendStatus(200);
+      res.status(200).send({ message: 'user successfully registered' });
     } catch (err) {
       console.error('Endpoint error: /register', err);
       res.sendStatus(500);
@@ -60,40 +61,32 @@ authRouter.post(
   },
 );
 
-authRouter.post(
-  '/login',
-  async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<undefined | AuthErrorResponse>) => {
-    try {
-      const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
-      if (!userAndPasswordValidationResult.ok) {
-        res.status(422).send(userAndPasswordValidationResult.errorResponse);
-        return;
-      }
-
-      const passwordHash = await storage.getUserPasswordHash(req.body.user as string);
-      if (!passwordHash) {
-        res.sendStatus(401);
-        return;
-      }
-
-      const authResult = await comparePassword(req.body.password as string, passwordHash);
-      if (!authResult) {
-        res.sendStatus(401);
-        return;
-      }
-
-      const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
-      await storage.upsertUserSessionId(req.body.user as string, sessionId);
-      setSessionCookie(res, sessionId);
-
-      console.info(`User logged in: ${req.body.user}`);
-      res.sendStatus(200);
-    } catch (err) {
-      console.error('Endpoint error: /login', err);
-      res.sendStatus(500);
+authRouter.post('/login', async (req: Request<object, object, LoginOrRegisterRequest>, res: Response<AuthResponse>) => {
+  try {
+    const userAndPasswordValidationResult = validateUserAndPassword(req.body.user, req.body.password);
+    if (!userAndPasswordValidationResult.ok) {
+      res.status(422).send(userAndPasswordValidationResult.errorResponse);
+      return;
     }
-  },
-);
+
+    const passwordHash = await storage.getUserPasswordHash(req.body.user as string);
+    const authResult = await comparePassword(req.body.password as string, passwordHash || '');
+    if (!authResult) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
+    await storage.upsertUserSessionId(req.body.user as string, sessionId);
+    setSessionCookie(res, sessionId);
+
+    console.info(`User logged in: ${req.body.user}`);
+    res.status(200).send({ message: 'user successfully logged in' });
+  } catch (err) {
+    console.error('Endpoint error: /login', err);
+    res.sendStatus(500);
+  }
+});
 
 authRouter.get('/logout', async (req: Request, res: Response) => {
   try {
@@ -113,7 +106,7 @@ authRouter.get('/logout', async (req: Request, res: Response) => {
 
     deleteSessionCookie(res);
     console.info(`User logged out user: ${loggedOutUser}`);
-    res.sendStatus(200);
+    res.status(200).send({ message: 'user successfully logged out' });
   } catch (err) {
     console.error('Endpoint error: /logout', err);
     res.sendStatus(500);
