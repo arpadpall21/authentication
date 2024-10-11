@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express';
-import generateUniqueId from 'generate-unique-id';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
-import { setSessionCookie, deleteSessionCookie, getSessionIdFromCookie } from '../misc/userSession';
+import { setSessionCookie, deleteSessionCookie, getSessionIdFromCookie, generateSessionId } from '../misc/userSession';
 import storage from '../storage';
 import config from '../config';
 
@@ -76,7 +75,7 @@ authRouter.post('/login', async (req: Request<object, object, LoginOrRegisterReq
       return;
     }
 
-    const sessionId = generateUniqueId({ length: config.authentication.sessionCookie.idLength });
+    const sessionId = generateSessionId();
     await storage.upsertUserSessionId(req.body.user as string, sessionId);
     setSessionCookie(res, sessionId);
 
