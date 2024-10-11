@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { Request, Response, NextFunction } from 'express';
 import cookie from 'cookie';
 import config from '../config';
@@ -40,4 +41,9 @@ export async function verifySessionToken(req: Request, res: Response, next: Next
   }
 
   next();
+}
+
+export function generateSessionId(): string {
+  const randomBytes = crypto.randomBytes(config.authentication.sessionCookie.idLength);
+  return randomBytes.toString('base64').slice(0, config.authentication.sessionCookie.idLength);
 }
