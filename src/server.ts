@@ -2,7 +2,7 @@ import express from 'express';
 import config from './config';
 import authRouter from './routes/authentication';
 import appRouter from './routes/app';
-import { verifySessionToken } from './misc/middlewares';
+import { verifySessionToken } from './misc/authHelpers/middlewares';
 
 console.info('Server initialized with config:', config);
 

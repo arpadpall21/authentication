@@ -1,6 +1,6 @@
 import cookie from 'cookie';
-import { LoginOrRegisterRequest, Response } from '../misc/requestAndResponseTypes';
-import config from '../config';
+import { LoginOrRegisterRequest, Response } from '../types/requestResponseTypes';
+import config from '../../config';
 
 export function getSessionIdFromCookie(req: LoginOrRegisterRequest): string | undefined {
   const cookies = cookie.parse(req.headers.cookie || '') as { sessionId: string | undefined };

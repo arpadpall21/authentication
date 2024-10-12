@@ -1,7 +1,7 @@
 import { NextFunction } from 'express';
-import { Request, Response } from '../misc/requestAndResponseTypes';
+import { Request, Response } from '../types/requestResponseTypes';
 import { getSessionIdFromCookie } from './sessionCookieHandlers';
-import storage from '../storage';
+import storage from '../../storage';
 
 export async function verifySessionToken(req: Request, res: Response, next: NextFunction) {
   const sessionId = getSessionIdFromCookie(req);

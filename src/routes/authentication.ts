@@ -1,8 +1,13 @@
 import { Router } from 'express';
-import { validateUserAndPassword, hashPassword, comparePassword, generateSecureToken } from '../misc/authHandlers';
-import { setSessionIdCookie, deleteSessionIdCookie } from '../misc/sessionCookieHandlers';
-import { Request, LoginOrRegisterRequest, AuthResponse, CsrfResponse } from '../misc/requestAndResponseTypes';
-import { verifySessionToken } from '../misc/middlewares';
+import {
+  validateUserAndPassword,
+  hashPassword,
+  comparePassword,
+  generateSecureToken,
+} from '../misc/authHelpers/authHandlers';
+import { setSessionIdCookie, deleteSessionIdCookie } from '../misc/authHelpers/sessionCookieHandlers';
+import { Request, LoginOrRegisterRequest, AuthResponse, CsrfResponse } from '../misc/types/requestResponseTypes';
+import { verifySessionToken } from '../misc/authHelpers/middlewares';
 import storage from '../storage';
 import config from '../config';
 

@@ -1,8 +1,8 @@
 import crypto from 'node:crypto';
 import PasswordValidator from 'password-validator';
 import bcrypt from 'bcrypt';
-import config from '../config';
-import { AuthResponseBody } from '../misc/requestAndResponseTypes';
+import config from '../../config';
+import { AuthResponseBody } from '../types/requestResponseTypes';
 
 interface ValidationResult {
   success: boolean;
