@@ -73,7 +73,7 @@ class FileStorage extends AbstractStorage {
 
       for (const user in fileStorage.users) {
         if (fileStorage.users[user].sessionId === sessionId) {
-          console.info(`Getting user by session id: ${user}`);
+          console.info(`Getting user and csrf token by session id: ${user}`);
           return { user };
         }
       }

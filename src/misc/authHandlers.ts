@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import PasswordValidator from 'password-validator';
 import bcrypt from 'bcrypt';
 import config from '../config';
@@ -156,4 +157,9 @@ export async function comparePassword(password: string, hash: string): Promise<b
       Math.floor(Math.random() * config.authentication.password.timingAttackProtectionMs),
     );
   });
+}
+
+export function generateSecureToken(length: number): string {
+  const randomBytes = crypto.randomBytes(length);
+  return randomBytes.toString('base64').slice(0, length);
 }
