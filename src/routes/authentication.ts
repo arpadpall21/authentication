@@ -1,6 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
-import { setSessionCookie, deleteSessionCookie, getSessionIdFromCookie, generateSessionId } from '../misc/userSession';
+import {
+  setSessionCookie,
+  deleteSessionCookie,
+  getSessionIdFromCookie,
+  generateSecureToken,
+} from '../misc/userSession';
 import storage from '../storage';
 import config from '../config';
 
@@ -75,7 +80,7 @@ authRouter.post('/login', async (req: Request<object, object, LoginOrRegisterReq
       return;
     }
 
-    const sessionId = generateSessionId();
+    const sessionId = generateSecureToken();
     await storage.upsertUserSessionId(req.body.user as string, sessionId);
     setSessionCookie(res, sessionId);
 
@@ -108,6 +113,17 @@ authRouter.get('/logout', async (req: Request, res: Response) => {
     res.status(200).send({ message: 'user successfully logged out' });
   } catch (err) {
     console.error('Endpoint error: /logout', err);
+    res.sendStatus(500);
+  }
+});
+
+// TODO: add verifySessionToken middleware
+authRouter.get('/csrfToken', async (req: Request, res: Response) => {
+  try {
+    
+  
+  } catch (err) {
+    console.error('Endpoint error: /csrfToken', err);
     res.sendStatus(500);
   }
 });

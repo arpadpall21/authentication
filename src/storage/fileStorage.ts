@@ -66,18 +66,18 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserBySessionId(sessionId: string): Promise<string | undefined> {
+  async getUserAndCSRFTokenBySessionId(sessionId: string): Promise<{ user?: string; CSRFToken?: string }> {
     try {
       const fileStorage = await this.readFileStorage();
 
       for (const user in fileStorage.users) {
         if (fileStorage.users[user].sessionId === sessionId) {
           console.info(`Getting user by session id: ${user}`);
-          return user;
+          return { user };
         }
       }
 
-      return undefined;
+      return {};
     } catch (err) {
       console.error('Failed to get user by session id');
       throw err;
@@ -102,6 +102,15 @@ class FileStorage extends AbstractStorage {
       throw err;
     }
   }
+
+  async upsertUserCSRFToken(user: string, CSRFToken: string): Promise<void> {
+
+  }
+
+
+
+
+
 
   async deleteUserSessionId(sessionId: string): Promise<string | false> {
     try {
