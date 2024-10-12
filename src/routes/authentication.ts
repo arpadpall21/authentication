@@ -94,15 +94,11 @@ authRouter.get('/logout', verifySessionToken, async (req: Request, res: AuthResp
 
 authRouter.get('/csrf', verifySessionToken, async (req: Request, res: CsrfResponse) => {
   try {
-
-
-
-
-
-    
     const csrfToken = generateSecureToken(config.authentication.csrfTokenLength);
+    await storage.upsertUserCsrfToken(req.user as string, csrfToken);
+
     res.status(200).send({ csrfToken });
-    
+    console.info(`Csrf token sent to user: ${req.user}`);
   } catch (err) {
     console.error('Endpoint error: /csrf', err);
     res.sendStatus(500);

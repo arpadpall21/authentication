@@ -9,6 +9,7 @@ interface Storage {
     [key: string]: {
       passwordHash?: string;
       sessionId?: string;
+      csrfToken?: string;
     };
   };
 }
@@ -103,14 +104,18 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async upsertUserCsrfoken(user: string, csrTfoken: string): Promise<void> {
+  async upsertUserCsrfToken(user: string, csrfToken: string): Promise<void> {
+    try {
+      const fileStorage = await this.readFileStorage();
+      fileStorage.users[user].csrfToken = csrfToken;
 
+      await this.writeFileStorage(fileStorage);
+      console.info(`Csrf token upserted for user: ${user}`);
+    } catch (err) {
+      console.error(`Failed to upsert csrf token for user ${user}`, err);
+      throw err;
+    }
   }
-
-
-
-
-
 
   async deleteUserSessionId(user: string): Promise<void> {
     try {
@@ -120,7 +125,7 @@ class FileStorage extends AbstractStorage {
       await this.writeFileStorage(fileStorage);
       console.info(`Session id deleted for user: ${user}`);
     } catch (err) {
-      console.error('Failed to delete session id', err);
+      console.error(`Failed delete session id for user ${user}`, err);
       throw err;
     }
   }
