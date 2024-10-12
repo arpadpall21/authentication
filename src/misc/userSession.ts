@@ -28,15 +28,11 @@ export function getSessionIdFromCookie(req: LoginOrRegisterRequest): string | un
 
 export async function verifySessionToken(req: Request, res: Response, next: NextFunction) {
   const sessionId = getSessionIdFromCookie(req);
-  if (!sessionId) {
-    console.info(`Unauthorized request with session id: ${sessionId || ''}`);
-    res.sendStatus(401);
-    return;
-  }
-
-  const { user } = await storage.getUserAndCsrfokenBySessionId(sessionId as string);
+  const { user } = await storage.getUserAndCsrfokenBySessionId(sessionId || '');
   if (!user) {
-    console.info(`Unauthorized request with session id: ${sessionId || ''}`);
+    console.info(
+      `Unauthorized request: (host=${req.hostname}) (port=${req.socket.remotePort}) (sessionId=${sessionId || ''})`,
+    );
     res.sendStatus(401);
     return;
   }
