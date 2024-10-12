@@ -66,7 +66,7 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserAndCSRFTokenBySessionId(sessionId: string): Promise<{ user?: string; CSRFToken?: string }> {
+  async getUserAndCsrfokenBySessionId(sessionId: string): Promise<{ user?: string; Csrfoken?: string }> {
     try {
       const fileStorage = await this.readFileStorage();
 
@@ -103,7 +103,7 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async upsertUserCSRFToken(user: string, CSRFToken: string): Promise<void> {
+  async upsertUserCsrfoken(user: string, csrTfoken: string): Promise<void> {
 
   }
 

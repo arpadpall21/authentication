@@ -1,4 +1,5 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
+import { Request, Response } from '../misc/requestAndResponseTypes';
 
 const appRouter = Router();
 
