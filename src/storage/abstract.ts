@@ -11,7 +11,7 @@ abstract class AbstractStorage {
   abstract getUserAndCsrfokenBySessionId(sessionId: string): Promise<{ user?: string; Csrfoken?: string }>;
   abstract upsertUserSessionId(user: string, sessionId: string): Promise<void>;
   abstract upsertUserCsrfoken(user: string, csrfToken: string): Promise<void>;
-  abstract deleteUserSessionId(sessionId: string): Promise<string | false>;
+  abstract deleteUserSessionId(user: string): Promise<void>;
 }
 
 export default AbstractStorage;

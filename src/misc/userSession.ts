@@ -5,7 +5,7 @@ import { Request, LoginOrRegisterRequest, Response } from '../misc/requestAndRes
 import config from '../config';
 import storage from '../storage';
 
-export function setSessionCookie(res: Response, sessionId: string): void {
+export function setSessionIdCookie(res: Response, sessionId: string): void {
   res.setHeader(
     'Set-Cookie',
     cookie.serialize('sessionId', sessionId, {
@@ -17,7 +17,7 @@ export function setSessionCookie(res: Response, sessionId: string): void {
   );
 }
 
-export function deleteSessionCookie(res: Response): void {
+export function deleteSessionIdCookie(res: Response): void {
   res.setHeader('Set-Cookie', cookie.serialize('sessionId', 'deleted', { expires: new Date(0) }));
 }
 

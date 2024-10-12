@@ -95,7 +95,7 @@ class FileStorage extends AbstractStorage {
       }
 
       await this.writeFileStorage(fileStorage);
-      console.info(`Upserting session id for user: ${user}`);
+      console.info(`Session id upserted for user: ${user}`);
       return;
     } catch (err) {
       console.error(`Failed to upser session id for user: ${user}`, err);
@@ -112,21 +112,13 @@ class FileStorage extends AbstractStorage {
 
 
 
-  async deleteUserSessionId(sessionId: string): Promise<string | false> {
+  async deleteUserSessionId(user: string): Promise<void> {
     try {
       const fileStorage = await this.readFileStorage();
+      delete fileStorage.users[user].sessionId;
 
-      for (const user in fileStorage.users) {
-        if (fileStorage.users[user].sessionId === sessionId) {
-          delete fileStorage.users[user].sessionId;
-          await this.writeFileStorage(fileStorage);
-
-          console.info(`Session id deleted for user: ${user}`);
-          return user;
-        }
-      }
-
-      return false;
+      await this.writeFileStorage(fileStorage);
+      console.info(`Session id deleted for user: ${user}`);
     } catch (err) {
       console.error('Failed to delete session id', err);
       throw err;

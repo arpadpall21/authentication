@@ -2,9 +2,8 @@ import { Router } from 'express';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
 import {
   verifySessionToken,
-  setSessionCookie,
-  deleteSessionCookie,
-  getSessionIdFromCookie,
+  setSessionIdCookie,
+  deleteSessionIdCookie,
   generateSecureToken,
 } from '../misc/userSession';
 import { Request, LoginOrRegisterRequest, AuthResponse, CsrfResponse } from '../misc/requestAndResponseTypes';
@@ -70,7 +69,7 @@ authRouter.post('/login', async (req: LoginOrRegisterRequest, res: AuthResponse)
 
     const sessionId = generateSecureToken(config.authentication.sessionCookie.idLength);
     await storage.upsertUserSessionId(req.body.user as string, sessionId);
-    setSessionCookie(res, sessionId);
+    setSessionIdCookie(res, sessionId);
 
     console.info(`User logged in: ${req.body.user}`);
     res.status(200).send({ message: 'user successfully logged in' });
@@ -80,24 +79,12 @@ authRouter.post('/login', async (req: LoginOrRegisterRequest, res: AuthResponse)
   }
 });
 
-authRouter.get('/logout', async (req: LoginOrRegisterRequest, res: AuthResponse) => {
+authRouter.get('/logout', verifySessionToken, async (req: Request, res: AuthResponse) => {
   try {
-    const sessionId = getSessionIdFromCookie(req);
-    if (!sessionId) {
-      console.info('Failed to log out');
-      res.sendStatus(401);
-      return;
-    }
+    await storage.deleteUserSessionId(req.user || '');
+    deleteSessionIdCookie(res);
 
-    const loggedOutUser = await storage.deleteUserSessionId(sessionId as string);
-    if (!loggedOutUser) {
-      console.info('Failed to log out');
-      res.sendStatus(401);
-      return;
-    }
-
-    deleteSessionCookie(res);
-    console.info(`User logged out user: ${loggedOutUser}`);
+    console.info(`User logged out user: ${req.user}`);
     res.status(200).send({ message: 'user successfully logged out' });
   } catch (err) {
     console.error('Endpoint error: /logout', err);
