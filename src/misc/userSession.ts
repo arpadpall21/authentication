@@ -33,8 +33,8 @@ export async function verifySessionToken(req: Request, res: Response, next: Next
     return;
   }
 
-  const loggedInUser = await storage.getUserAndCSRFTokenBySessionId(sessionId as string);
-  if (!loggedInUser) {
+  const { user } = await storage.getUserAndCSRFTokenBySessionId(sessionId as string);
+  if (!user) {
     console.info(`Unauthorized request with session id: ${sessionId || ''}`);
     res.sendStatus(401);
     return;
@@ -43,7 +43,7 @@ export async function verifySessionToken(req: Request, res: Response, next: Next
   next();
 }
 
-export function generateSecureToken(): string {
-  const randomBytes = crypto.randomBytes(config.authentication.sessionCookie.idLength);
-  return randomBytes.toString('base64').slice(0, config.authentication.sessionCookie.idLength);
+export function generateSecureToken(length: number): string {
+  const randomBytes = crypto.randomBytes(length);
+  return randomBytes.toString('base64').slice(0, length);
 }

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { validateUserAndPassword, hashPassword, comparePassword } from '../misc/authHandlers';
 import {
+  verifySessionToken,
   setSessionCookie,
   deleteSessionCookie,
   getSessionIdFromCookie,
@@ -80,7 +81,7 @@ authRouter.post('/login', async (req: Request<object, object, LoginOrRegisterReq
       return;
     }
 
-    const sessionId = generateSecureToken();
+    const sessionId = generateSecureToken(config.authentication.sessionCookie.idLength);
     await storage.upsertUserSessionId(req.body.user as string, sessionId);
     setSessionCookie(res, sessionId);
 
@@ -92,7 +93,7 @@ authRouter.post('/login', async (req: Request<object, object, LoginOrRegisterReq
   }
 });
 
-authRouter.get('/logout', async (req: Request, res: Response) => {
+authRouter.get('/logout', async (req: Request, res: Response<AuthResponse>) => {
   try {
     const sessionId = getSessionIdFromCookie(req);
     if (!sessionId) {
@@ -117,13 +118,14 @@ authRouter.get('/logout', async (req: Request, res: Response) => {
   }
 });
 
-// TODO: add verifySessionToken middleware
-authRouter.get('/csrfToken', async (req: Request, res: Response) => {
+// TODO: add verifySessionToken middleware (and TEST it!)
+authRouter.get('/csrf', verifySessionToken, async (req: Request, res: Response<{ csrfToken: string }>) => {
   try {
+    const csrfToken = generateSecureToken(config.authentication.csrfTokenLength);
+    res.status(200).send({ csrfToken });
     
-  
   } catch (err) {
-    console.error('Endpoint error: /csrfToken', err);
+    console.error('Endpoint error: /csrf', err);
     res.sendStatus(500);
   }
 });
