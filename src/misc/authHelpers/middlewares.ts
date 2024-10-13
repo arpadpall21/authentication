@@ -7,7 +7,8 @@ export async function verifySessionToken(req: Request, res: Response, next: Next
   const sessionId = getSessionIdFromCookie(req);
   if (!sessionId) {
     console.info(
-      `Unauthorized request: (host=${req.hostname}) (port=${req.socket.remotePort}) (sessionId=${sessionId || ''})`,
+      `Unauthorized request: (host=${req.hostname}) (port=${req.socket.remotePort})` +
+        ` (sessionId=${sessionId || ''}) (csrfToken=${req.get('X-CSRF-Token')})`,
     );
     res.sendStatus(401);
     return;
@@ -16,7 +17,8 @@ export async function verifySessionToken(req: Request, res: Response, next: Next
   const { user } = await storage.getUserAndCsrfokenBySessionId(sessionId || '');
   if (!user) {
     console.info(
-      `Unauthorized request: (host=${req.hostname}) (port=${req.socket.remotePort}) (sessionId=${sessionId || ''})`,
+      `Unauthorized request: (host=${req.hostname}) (port=${req.socket.remotePort})` +
+        ` (sessionId=${sessionId || ''}) (csrfToken=${req.get('X-CSRF-Token')})`,
     );
     res.sendStatus(401);
     return;
