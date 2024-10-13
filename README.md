@@ -2,10 +2,10 @@
 
 ## Description
   - This is a Node.js server where user & password session based authentication is implemented
-  - The connected storage is a simple json file for the sake of development simplicity (DON'T use it in prod! It lack DB features like performace, ACID compliance, etc...)
-    - Different storages can be connected by implementing the `AbstractStorage` class
-  - Once the usesr registerd and logged in its session id is stored in a cookie on client side
-  - Additionally we can CSRF protect endpoints as well (description in the Usage session)
+  - The connected storage is a simple json file for the sake of development simplicity (DO NOT use it in prod! It lacks database features such as performance, ACID compliance, etc...)
+    - Different storages types can be connected by implementing the `AbstractStorage` class
+  - Once the user is registered and logged in, their session id is stored in a cookie on the client side
+  - Optionally we can also protect endpoints against CSRF attacks as well
 
 ## Requirements
  - Node.js v22.9+
@@ -62,4 +62,4 @@
   GET /csrf
   ``` 
   - The received token is passed in HTTP header `X-CSRF-Token`
-  - Test `/protectedCsrfRoute` endpoint is csrf protected
+  - The `/protectedCsrfRoute` endpoint is csrf protected (to try this feature)
