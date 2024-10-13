@@ -31,3 +31,27 @@
   - On top of the session id cookie the server also supports csrf protection
     - Logged in users can request their csrf token on `/csrf` endpoint, **each request returns a new refreshed csrf token!**
     - CSRF protected endpoints accept an `X-CSRF-Token` HTTP header where the token is provided
+
+## Examples
+##### User Login
+  - Register a new user
+  ```
+  POST /register
+  {
+    "user": "Doe John",
+    "password": "super secure password"
+  }
+  ```
+  - Login the registered user (this will set the user's session id cookie in the browser)
+  ```
+  POST /login
+  {
+    "user": "Doe John",
+    "password": "super secure password"
+  }
+  ```
+  - Now the logged in user is allowed to enter any routes
+  - Log out (this will delete the user's session id cookie in the browser)
+  ```
+  GET /logout
+  ```
