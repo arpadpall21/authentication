@@ -67,14 +67,14 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserAndCsrfokenBySessionId(sessionId: string): Promise<{ user?: string; Csrfoken?: string }> {
+  async getUserAndCsrfokenBySessionId(sessionId: string): Promise<{ user?: string; csrfToken?: string }> {
     try {
       const fileStorage = await this.readFileStorage();
 
       for (const user in fileStorage.users) {
         if (fileStorage.users[user].sessionId === sessionId) {
           console.info(`Getting user and csrf token by session id: ${user}`);
-          return { user };
+          return { user, csrfToken: fileStorage.users[user].csrfToken };
         }
       }
 
