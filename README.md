@@ -29,5 +29,5 @@
 
 ##### CSRF (optional)
   - On top of the session id cookie the server also supports csrf protection
-    - The logged in user can request the csrf token on the `/csrf` endpoint, **each request returns a new refreshed csrf token!**
-    - The csrf token is passed as `X-CSRF-Token` HTTP header (on endpoints that are also csrf prtected)
+    - Logged in users can request their csrf token on `/csrf` endpoint, **each request returns a new refreshed csrf token!**
+    - CSRF protected endpoints accept an `X-CSRF-Token` HTTP header where the token is provided
