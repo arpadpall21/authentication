@@ -9,6 +9,7 @@ interface Storage {
     [key: string]: {
       passwordHash?: string;
       sessionId?: string;
+      csrfToken?: string;
     };
   };
 }
@@ -66,18 +67,18 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async getUserBySessionId(sessionId: string): Promise<string | undefined> {
+  async getUserAndCsrfokenBySessionId(sessionId: string): Promise<{ user?: string; csrfToken?: string }> {
     try {
       const fileStorage = await this.readFileStorage();
 
       for (const user in fileStorage.users) {
         if (fileStorage.users[user].sessionId === sessionId) {
-          console.info(`Getting user by session id: ${user}`);
-          return user;
+          console.info(`Getting user and csrf token by session id: ${user}`);
+          return { user, csrfToken: fileStorage.users[user].csrfToken };
         }
       }
 
-      return undefined;
+      return {};
     } catch (err) {
       console.error('Failed to get user by session id');
       throw err;
@@ -95,7 +96,7 @@ class FileStorage extends AbstractStorage {
       }
 
       await this.writeFileStorage(fileStorage);
-      console.info(`Upserting session id for user: ${user}`);
+      console.info(`Session id upserted for user: ${user}`);
       return;
     } catch (err) {
       console.error(`Failed to upser session id for user: ${user}`, err);
@@ -103,23 +104,28 @@ class FileStorage extends AbstractStorage {
     }
   }
 
-  async deleteUserSessionId(sessionId: string): Promise<string | false> {
+  async upsertUserCsrfToken(user: string, csrfToken: string): Promise<void> {
     try {
       const fileStorage = await this.readFileStorage();
+      fileStorage.users[user].csrfToken = csrfToken;
 
-      for (const user in fileStorage.users) {
-        if (fileStorage.users[user].sessionId === sessionId) {
-          delete fileStorage.users[user].sessionId;
-          await this.writeFileStorage(fileStorage);
-
-          console.info(`Session id deleted for user: ${user}`);
-          return user;
-        }
-      }
-
-      return false;
+      await this.writeFileStorage(fileStorage);
+      console.info(`Csrf token upserted for user: ${user}`);
     } catch (err) {
-      console.error('Failed to delete session id', err);
+      console.error(`Failed to upsert csrf token for user ${user}`, err);
+      throw err;
+    }
+  }
+
+  async deleteUserSessionId(user: string): Promise<void> {
+    try {
+      const fileStorage = await this.readFileStorage();
+      delete fileStorage.users[user].sessionId;
+
+      await this.writeFileStorage(fileStorage);
+      console.info(`Session id deleted for user: ${user}`);
+    } catch (err) {
+      console.error(`Failed delete session id for user ${user}`, err);
       throw err;
     }
   }

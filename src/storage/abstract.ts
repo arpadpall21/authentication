@@ -8,9 +8,10 @@ abstract class AbstractStorage {
   abstract getUserPasswordHash(user: string): Promise<string | undefined>;
   abstract upsertUserPasswordHash(user: string, passwordHash: string): Promise<void>;
 
-  abstract getUserBySessionId(sessionId: string): Promise<string | undefined>;
+  abstract getUserAndCsrfokenBySessionId(sessionId: string): Promise<{ user?: string; csrfToken?: string }>;
   abstract upsertUserSessionId(user: string, sessionId: string): Promise<void>;
-  abstract deleteUserSessionId(sessionId: string): Promise<string | false>;
+  abstract upsertUserCsrfToken(user: string, csrfToken: string): Promise<void>;
+  abstract deleteUserSessionId(user: string): Promise<void>;
 }
 
 export default AbstractStorage;

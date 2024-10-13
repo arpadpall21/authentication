@@ -32,6 +32,7 @@ interface Config {
       secure: boolean;
       idLength: number;
     };
+    csrfTokenLength: number;
   };
   storage: {
     use: StorageType;
@@ -62,7 +63,7 @@ const defaultConfig: Config = {
       allowSpaces: true,
       blacklist: [],
       saltRounds: 10, // recommended range 8-15
-      timingAttackProtectionMs: 1000,
+      timingAttackProtectionMs: 500,
     },
     sessionCookie: {
       httpOnly: true,
@@ -71,6 +72,7 @@ const defaultConfig: Config = {
       secure: false, // when true requires HTTPS
       idLength: 32,
     },
+    csrfTokenLength: 32,
   },
   storage: {
     use: StorageType.FILE,

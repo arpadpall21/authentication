@@ -1,7 +1,8 @@
+import crypto from 'node:crypto';
 import PasswordValidator from 'password-validator';
 import bcrypt from 'bcrypt';
-import config from '../config';
-import { AuthResponse } from '../routes/authentication';
+import config from '../../config';
+import { AuthResponseBody } from '../types/requestResponseTypes';
 
 interface ValidationResult {
   success: boolean;
@@ -118,12 +119,12 @@ function validatePassword(password?: string): ValidationResult {
 export function validateUserAndPassword(
   user?: string,
   password?: string,
-): { ok: boolean; errorResponse?: AuthResponse } {
+): { ok: boolean; errorResponse?: AuthResponseBody } {
   const userValidationResult = validateUser(user);
   const passwordValidationResult = validatePassword(password);
 
   if (!userValidationResult.success || !passwordValidationResult.success) {
-    const errorResponse: AuthResponse = {};
+    const errorResponse: AuthResponseBody = {};
     if (!userValidationResult.success) {
       errorResponse.userError = userValidationResult.message;
     }
@@ -156,4 +157,9 @@ export async function comparePassword(password: string, hash: string): Promise<b
       Math.floor(Math.random() * config.authentication.password.timingAttackProtectionMs),
     );
   });
+}
+
+export function generateSecureToken(length: number): string {
+  const randomBytes = crypto.randomBytes(length);
+  return randomBytes.toString('base64').slice(0, length);
 }

@@ -2,7 +2,6 @@ import express from 'express';
 import config from './config';
 import authRouter from './routes/authentication';
 import appRouter from './routes/app';
-import { verifySessionToken } from './misc/userSession';
 
 console.info('Server initialized with config:', config);
 
@@ -13,7 +12,7 @@ const port = config.server.port;
 app.use(express.json());
 
 app.use('/', authRouter);
-app.use('/', verifySessionToken, appRouter);
+app.use('/', appRouter);
 
 app.listen(port, () => {
   console.warn(`Express is listening on: ${host}:${port}`);
