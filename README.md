@@ -20,12 +20,12 @@
   - Start prod server with `npm run`
 
 #### Config
-  - The server configurable through the `config/config.json`
-  - Default configs in `src/config.ts:defaultConfig`
+  - The server configurable through `config/config.json` file
+  - Default configs are described by `src/config.ts:defaultConfig`
 
 #### Token Verification on Endpoints
-  - The `verifySessionToken` middleware verifies the loggined in user's session id (cookie)
-  - The `verifySessionAndCsrfTokens` middleware verifies the loggined in user's session id (cookie) and CSRF token
+  - The `verifySessionToken` middleware verifies the logged in in user's session id (cookie)
+  - The `verifySessionAndCsrfTokens` middleware verifies the logged in in user's session id (cookie) and CSRF token
 
 #### CSRF (optional)
   - On top of the session id cookie the server also supports csrf protection
@@ -42,7 +42,7 @@
     "password": "super secure password"
   }
   ```
-  - Login the registered user (this will set the user's session id cookie in the browser)
+  - Login the registered user (set the user session id cookie in the browser)
   ```
   POST /login
   {
@@ -51,15 +51,15 @@
   }
   ```
   - Now the logged in user is allowed to enter any routes
-  - Log out (this will delete the user's session id cookie in the browser)
+  - Log out (deletes the user session id cookie from the browser)
   ```
   GET /logout
   ```
 
-#### CSRF Protected Endpoint
+#### CSRF Protect Endpoints (Optional)
   - The logged in user requests it's csrf token (each request refreshes the token)
   ```
   GET /csrf
   ``` 
-  - The received token is passed in HTTP header `X-CSRF-Token`
+  - CSRF protected request include a `X-CSRF-Token` HTTP header to send the csrf token
   - The `/protectedCsrfRoute` endpoint is csrf protected (to try this feature)
