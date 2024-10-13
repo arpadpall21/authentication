@@ -55,3 +55,11 @@
   ```
   GET /logout
   ```
+
+#### CSRF Protected Endpoint
+  - The logged in user requests it's csrf token (each request refreshes the token)
+  ```
+  GET /csrf
+  ``` 
+  - The received token is passed in HTTP header `X-CSRF-Token`
+  - Test `/protectedCsrfRoute` endpoint is csrf protected
