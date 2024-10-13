@@ -1,5 +1,5 @@
 export enum StorageType {
-  FILE = 'file',
+  JSON_FILE = 'jsonFile',
 }
 
 abstract class AbstractStorage {

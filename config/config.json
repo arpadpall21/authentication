@@ -4,9 +4,9 @@
     "port": 3000
   },
   "storage": {
-    "use": "file",
-    "file": {
-      "path": "./fileStorage/fileStorage.json"
+    "use": "jsonFile",
+    "jsonFile": {
+      "path": "./fileStorage/jsonFileStorage.json"
     }
   }
 }

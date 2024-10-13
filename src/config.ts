@@ -36,7 +36,7 @@ interface Config {
   };
   storage: {
     use: StorageType;
-    file: {
+    jsonFile: {
       path: string;
     };
   };
@@ -75,8 +75,8 @@ const defaultConfig: Config = {
     csrfTokenLength: 32,
   },
   storage: {
-    use: StorageType.FILE,
-    file: {
+    use: StorageType.JSON_FILE,
+    jsonFile: {
       path: '',
     },
   },

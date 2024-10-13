@@ -2,7 +2,7 @@ import fs, { promises as fsPromises } from 'node:fs';
 import AbstractStorage from './abstract';
 import config from '../config';
 
-const fileStoragePath = config.storage.file.path;
+const fileStoragePath = config.storage.jsonFile.path;
 
 interface Storage {
   users: {
@@ -14,19 +14,18 @@ interface Storage {
   };
 }
 
-class FileStorage extends AbstractStorage {
+class JSONFileStorage extends AbstractStorage {
   constructor() {
     super();
 
     try {
       const result = fs.readFileSync(fileStoragePath);
       const resultObj = JSON.parse(result.toString());
-
       if (!resultObj.users || typeof resultObj.users !== 'object') {
         throw Error('Invalid storage format');
       }
 
-      console.info(`File used for file storage: ${fileStoragePath}`);
+      console.info(`File used for json file storage: ${fileStoragePath}`);
     } catch (err) {
       throw err;
     }
@@ -51,7 +50,6 @@ class FileStorage extends AbstractStorage {
   async upsertUserPasswordHash(user: string, passwordHash: string): Promise<void> {
     try {
       const fileStorage = await this.readFileStorage();
-
       if (fileStorage.users[user]) {
         fileStorage.users[user].passwordHash = passwordHash;
       } else {
@@ -70,7 +68,6 @@ class FileStorage extends AbstractStorage {
   async getUserAndCsrfokenBySessionId(sessionId: string): Promise<{ user?: string; csrfToken?: string }> {
     try {
       const fileStorage = await this.readFileStorage();
-
       for (const user in fileStorage.users) {
         if (fileStorage.users[user].sessionId === sessionId) {
           console.info(`Getting user and csrf token by session id: ${user}`);
@@ -88,7 +85,6 @@ class FileStorage extends AbstractStorage {
   async upsertUserSessionId(user: string, sessionId: string): Promise<void> {
     try {
       const fileStorage = await this.readFileStorage();
-
       if (fileStorage.users[user]) {
         fileStorage.users[user].sessionId = sessionId;
       } else {
@@ -140,4 +136,4 @@ class FileStorage extends AbstractStorage {
   }
 }
 
-export default FileStorage;
+export default JSONFileStorage;
