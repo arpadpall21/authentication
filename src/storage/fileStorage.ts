@@ -135,8 +135,8 @@ class FileStorage extends AbstractStorage {
     return JSON.parse(result.toString());
   }
 
-  private async writeFileStorage(storage: object): Promise<void> {
-    await fsPromises.writeFile(fileStoragePath, JSON.stringify(storage));
+  private async writeFileStorage(storage: Storage): Promise<void> {
+    await fsPromises.writeFile(fileStoragePath, JSON.stringify(storage, null, 2));
   }
 }
 
