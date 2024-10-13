@@ -63,7 +63,7 @@ const defaultConfig: Config = {
       allowSpaces: true,
       blacklist: [],
       saltRounds: 10, // recommended range 8-15
-      timingAttackProtectionMs: 1000,
+      timingAttackProtectionMs: 500,
     },
     sessionCookie: {
       httpOnly: true,
