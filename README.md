@@ -61,5 +61,5 @@
   ```
   GET /csrf
   ``` 
-  - CSRF protected request include a `X-CSRF-Token` HTTP header to send the csrf token
+  - CSRF protected request include a `X-CSRF-Token` HTTP header to send the csrf token to the server
   - The `/protectedCsrfRoute` endpoint is csrf protected (to try this feature)
